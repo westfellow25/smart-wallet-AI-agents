@@ -1,0 +1,244 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Organizations ───────────────────────────────────────────
+
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  plan      Plan     @default(STARTER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users        User[]
+  wallets      Wallet[]
+  agents       Agent[]
+  policies     Policy[]
+  apiKeys      ApiKey[]
+  transactions Transaction[]
+
+  @@map("organizations")
+}
+
+enum Plan {
+  STARTER
+  GROWTH
+  ENTERPRISE
+}
+
+// ─── Users ───────────────────────────────────────────────────
+
+model User {
+  id             String   @id @default(uuid())
+  email          String   @unique
+  passwordHash   String
+  name           String
+  role           UserRole @default(MEMBER)
+  organizationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  approvals    Approval[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+// ─── Wallets ─────────────────────────────────────────────────
+
+model Wallet {
+  id             String       @id @default(uuid())
+  name           String
+  type           WalletType   @default(AGENT)
+  currency       String       @default("USD")
+  balance        Decimal      @default(0) @db.Decimal(18, 2)
+  monthlyBudget  Decimal?     @db.Decimal(18, 2)
+  dailyLimit     Decimal?     @db.Decimal(18, 2)
+  perTxLimit     Decimal?     @db.Decimal(18, 2)
+  status         WalletStatus @default(ACTIVE)
+  organizationId String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  organization Organization  @relation(fields: [organizationId], references: [id])
+  agents       Agent[]
+  transactions Transaction[]
+
+  @@map("wallets")
+}
+
+enum WalletType {
+  MASTER
+  AGENT
+  DEPARTMENT
+}
+
+enum WalletStatus {
+  ACTIVE
+  FROZEN
+  CLOSED
+}
+
+// ─── Agents ──────────────────────────────────────────────────
+
+model Agent {
+  id             String      @id @default(uuid())
+  name           String
+  description    String?
+  type           String      // e.g. "customer-support", "research", "coding"
+  status         AgentStatus @default(ACTIVE)
+  walletId       String
+  organizationId String
+  metadata       Json?       // flexible field for agent-specific config
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  wallet       Wallet       @relation(fields: [walletId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id])
+  transactions Transaction[]
+  policies     AgentPolicy[]
+
+  @@map("agents")
+}
+
+enum AgentStatus {
+  ACTIVE
+  PAUSED
+  REVOKED
+}
+
+// ─── Policies ────────────────────────────────────────────────
+
+model Policy {
+  id             String     @id @default(uuid())
+  name           String
+  description    String?
+  rules          Json       // flexible rules engine: { maxAmount, allowedCategories, timeWindows, etc. }
+  action         PolicyAction @default(BLOCK)
+  organizationId String
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  organization Organization  @relation(fields: [organizationId], references: [id])
+  agents       AgentPolicy[]
+
+  @@map("policies")
+}
+
+enum PolicyAction {
+  ALLOW
+  BLOCK
+  REQUIRE_APPROVAL
+  FLAG
+}
+
+model AgentPolicy {
+  agentId  String
+  policyId String
+
+  agent  Agent  @relation(fields: [agentId], references: [id])
+  policy Policy @relation(fields: [policyId], references: [id])
+
+  @@id([agentId, policyId])
+  @@map("agent_policies")
+}
+
+// ─── Transactions ────────────────────────────────────────────
+
+model Transaction {
+  id             String            @id @default(uuid())
+  amount         Decimal           @db.Decimal(18, 2)
+  currency       String            @default("USD")
+  type           TransactionType
+  status         TransactionStatus @default(PENDING)
+  category       String?           // e.g. "api-call", "cloud-compute", "saas-subscription"
+  description    String?
+  merchantName   String?
+  reference      String?           @unique // external reference / idempotency key
+  metadata       Json?
+  agentId        String
+  walletId       String
+  organizationId String
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  agent        Agent        @relation(fields: [agentId], references: [id])
+  wallet       Wallet       @relation(fields: [walletId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id])
+  approval     Approval?
+
+  @@index([organizationId, createdAt])
+  @@index([agentId, createdAt])
+  @@index([walletId, createdAt])
+  @@map("transactions")
+}
+
+enum TransactionType {
+  SPEND
+  DEPOSIT
+  REFUND
+  TRANSFER
+}
+
+enum TransactionStatus {
+  PENDING
+  APPROVED
+  COMPLETED
+  BLOCKED
+  FAILED
+}
+
+// ─── Approvals ───────────────────────────────────────────────
+
+model Approval {
+  id            String         @id @default(uuid())
+  status        ApprovalStatus @default(PENDING)
+  note          String?
+  transactionId String         @unique
+  reviewerId    String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+  reviewer    User?       @relation(fields: [reviewerId], references: [id])
+
+  @@map("approvals")
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ─── API Keys ────────────────────────────────────────────────
+
+model ApiKey {
+  id             String   @id @default(uuid())
+  name           String
+  keyHash        String   @unique
+  keyPrefix      String   // first 8 chars for display: "av_live_abc..."
+  scopes         String[] // e.g. ["transactions:write", "wallets:read"]
+  lastUsedAt     DateTime?
+  expiresAt      DateTime?
+  organizationId String
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@map("api_keys")
+}
