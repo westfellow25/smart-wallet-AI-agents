@@ -1,124 +1,126 @@
 # AgentVault
 
-**Corporate wallet infrastructure for AI agents** — spending policies, approvals, and audit trail.
+**Corporate wallet infrastructure for AI agents** — spending policies, approvals, audit trail.
 
-AgentVault gives companies control over how their AI agents spend money. Set budgets, enforce policies, require approvals, and monitor every transaction in real-time.
+AgentVault gives companies control over how their AI agents spend money. Set budgets, enforce policies, require human approvals on high-value transactions, and audit every dollar in real-time.
 
-## Architecture
+## Monorepo structure
 
 ```
 agentvault/
 ├── apps/
 │   ├── api/            # Express + TypeScript + Prisma backend
-│   └── dashboard/      # Next.js + Tailwind admin UI
+│   └── dashboard/      # Next.js 14 + Tailwind admin UI
 ├── packages/
-│   └── sdk/            # TypeScript SDK for AI agents
+│   ├── sdk/            # TypeScript SDK
+│   └── python-sdk/     # Python SDK
 ├── docker-compose.yml  # Postgres + Redis
+├── railway.json        # Railway deploy config
 └── turbo.json          # Monorepo orchestration
 ```
 
+## Features
+
+- **Multi-tenant wallets** — master, department, per-agent wallets with limits
+- **Policy Engine** — configurable rules: max amounts, categories, time windows
+- **Approval workflows** — pause high-value transactions for human review
+- **API Keys** — scoped keys for agents (one-time display, bcrypt-hashed storage)
+- **Webhooks** — HMAC-signed event delivery for `transaction.blocked`, `approval.required`, etc.
+- **Analytics** — spend by day / category / agent, KPIs, trending
+- **Audit log** — every sensitive action logged
+- **Rate limiting** — per-endpoint protection (auth, transactions, general)
+- **Billing stubs** — Stripe-ready plans (Starter $199, Growth $599, Enterprise $2000)
+- **Landing + pricing page** — conversion-ready marketing site
+
 ## Tech Stack
 
-- **API**: Node.js, Express, TypeScript, Prisma ORM, Zod validation
+- **API**: Node.js, Express, TypeScript, Prisma, Zod, bcrypt, JWT, express-rate-limit
 - **Database**: PostgreSQL 16 + Redis 7
-- **Dashboard**: Next.js 14, React 18, Tailwind CSS, Recharts
-- **SDK**: TypeScript, zero dependencies
-- **Auth**: JWT + bcrypt
-- **Infra**: Docker Compose, Turborepo
+- **Dashboard**: Next.js 14 (App Router), React 18, Tailwind CSS
+- **SDKs**: TypeScript (fetch), Python (httpx)
+- **Infra**: Docker, Turborepo, Railway/Vercel-ready
 
 ## Quick Start
 
 ### Prerequisites
+- Node.js 18+, Docker, npm 9+
 
-- Node.js 18+
-- Docker & Docker Compose
-- npm 9+
-
-### 1. Clone & install
+### Setup
 
 ```bash
-git clone https://github.com/westfellow25/smart-wallet-ai-agents.git
-cd smart-wallet-ai-agents
+# Install deps
 npm install
-```
 
-### 2. Start database
-
-```bash
+# Start DB
 docker-compose up -d
-```
 
-### 3. Set up environment
-
-```bash
+# Configure env
 cp .env.example .env
-```
+cp apps/dashboard/.env.example apps/dashboard/.env.local
 
-### 4. Run migrations & seed
-
-```bash
+# Migrate + seed
 cd apps/api
 npx prisma migrate dev --name init
 npx prisma db seed
-```
 
-### 5. Start dev servers
-
-```bash
-# From root
-npm run dev
+# Start dev servers (from root)
+cd ../.. && npm run dev
 ```
 
 - API: http://localhost:3001
 - Dashboard: http://localhost:3000
-- Prisma Studio: `npm run db:studio`
+- Login: `admin@acme.ai` / `demo1234`
 
-### Demo credentials
+## API Reference
 
-```
-Email: admin@acme.ai
-Password: demo1234
-```
+### Auth
+- `POST /api/v1/auth/register` — create org + owner
+- `POST /api/v1/auth/login` — get JWT
+- `GET /api/v1/auth/me` — current user
 
-## API Endpoints
+### Wallets
+- `GET /api/v1/wallets`
+- `POST /api/v1/wallets`
+- `PATCH /api/v1/wallets/:id`
+- `POST /api/v1/wallets/:id/deposit`
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/v1/auth/register` | Create org + first user |
-| POST | `/api/v1/auth/login` | Get JWT token |
-| GET | `/api/v1/auth/me` | Current user info |
-| GET | `/api/v1/wallets` | List wallets |
-| POST | `/api/v1/wallets` | Create wallet |
-| POST | `/api/v1/wallets/:id/deposit` | Add funds |
-| GET | `/api/v1/agents` | List agents |
-| POST | `/api/v1/agents` | Create agent |
-| POST | `/api/v1/agents/:id/policies` | Attach policy |
-| GET | `/api/v1/transactions` | List transactions |
-| POST | `/api/v1/transactions` | Submit spend request |
-| POST | `/api/v1/transactions/:id/review` | Approve/reject |
-| GET | `/api/v1/policies` | List policies |
-| POST | `/api/v1/policies` | Create policy |
+### Agents
+- `GET /api/v1/agents`
+- `POST /api/v1/agents`
+- `PATCH /api/v1/agents/:id`
+- `POST /api/v1/agents/:id/policies`
+
+### Transactions
+- `GET /api/v1/transactions?status=&agentId=`
+- `POST /api/v1/transactions` — submit spend (evaluates policies)
+- `POST /api/v1/transactions/:id/review` — approve/reject
+
+### Policies, API Keys, Webhooks, Analytics, Audit, Billing
+See respective route files under `apps/api/src/routes/`.
 
 ## SDK Usage
 
+**TypeScript:**
 ```typescript
 import { AgentVault } from "@agentvault/sdk";
-
-const vault = new AgentVault({
-  apiKey: "av_live_...",
-  baseUrl: "http://localhost:3001",
-});
-
-// Submit a spend request
+const vault = new AgentVault({ apiKey: "av_live_..." });
 const { transaction } = await vault.spend({
-  amount: 5.00,
-  category: "api-call",
-  description: "GPT-4 inference",
-  merchantName: "OpenAI",
+  amount: 5.00, category: "api-call", merchantName: "OpenAI"
 });
-
-console.log(transaction.status); // "COMPLETED" | "PENDING" | "BLOCKED"
 ```
+
+**Python:**
+```python
+from agentvault import AgentVault
+vault = AgentVault(api_key="av_live_...")
+tx = vault.spend(amount=5.00, category="api-call")
+```
+
+## Deployment
+
+- **Dashboard** → Vercel (`vercel.json` included)
+- **API** → Railway (`railway.json` with Dockerfile) or any Docker host
+- **DB** → Neon / Supabase / Railway Postgres
 
 ## License
 

@@ -10,12 +10,16 @@ datasource db {
 // ─── Organizations ───────────────────────────────────────────
 
 model Organization {
-  id        String   @id @default(uuid())
-  name      String
-  slug      String   @unique
-  plan      Plan     @default(STARTER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                   String    @id @default(uuid())
+  name                 String
+  slug                 String    @unique
+  plan                 Plan      @default(STARTER)
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?   @unique
+  subscriptionStatus   String?
+  trialEndsAt          DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
   users        User[]
   wallets      Wallet[]
@@ -23,6 +27,8 @@ model Organization {
   policies     Policy[]
   apiKeys      ApiKey[]
   transactions Transaction[]
+  webhooks     Webhook[]
+  auditLogs    AuditLog[]
 
   @@map("organizations")
 }
@@ -228,17 +234,54 @@ enum ApprovalStatus {
 // ─── API Keys ────────────────────────────────────────────────
 
 model ApiKey {
-  id             String   @id @default(uuid())
+  id             String    @id @default(uuid())
   name           String
-  keyHash        String   @unique
-  keyPrefix      String   // first 8 chars for display: "av_live_abc..."
-  scopes         String[] // e.g. ["transactions:write", "wallets:read"]
+  keyHash        String    @unique
+  keyPrefix      String
+  scopes         String[]
+  agentId        String?
   lastUsedAt     DateTime?
   expiresAt      DateTime?
+  revokedAt      DateTime?
+  organizationId String
+  createdAt      DateTime  @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@map("api_keys")
+}
+
+// ─── Webhooks ────────────────────────────────────────────────
+
+model Webhook {
+  id             String   @id @default(uuid())
+  url            String
+  events         String[] // ["transaction.blocked", "approval.required", ...]
+  secret         String
+  enabled        Boolean  @default(true)
   organizationId String
   createdAt      DateTime @default(now())
 
   organization Organization @relation(fields: [organizationId], references: [id])
 
-  @@map("api_keys")
+  @@map("webhooks")
+}
+
+// ─── Audit Log ───────────────────────────────────────────────
+
+model AuditLog {
+  id             String   @id @default(uuid())
+  action         String   // e.g. "agent.created", "policy.updated"
+  resourceType   String
+  resourceId     String
+  actorId        String?  // user id
+  actorType      String   @default("user") // user | system | api
+  metadata       Json?
+  organizationId String
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId, createdAt])
+  @@map("audit_logs")
 }

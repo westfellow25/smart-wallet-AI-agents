@@ -4,6 +4,8 @@ import { prisma } from "../lib/prisma";
 import { authenticate } from "../middleware/auth";
 import { AppError } from "../middleware/errorHandler";
 import { evaluatePolicies } from "../services/policyEngine";
+import { dispatchWebhook } from "../services/webhooks";
+import { logAudit } from "../services/audit";
 
 export const transactionsRouter = Router();
 transactionsRouter.use(authenticate);
@@ -109,6 +111,19 @@ transactionsRouter.post("/", async (req: Request, res: Response) => {
         organizationId: orgId,
       },
     });
+    dispatchWebhook({
+      event: "transaction.blocked",
+      organizationId: orgId,
+      data: { transaction: tx, reason: policyResult.reason },
+    }).catch(() => {});
+    logAudit({
+      action: "transaction.blocked",
+      resourceType: "Transaction",
+      resourceId: tx.id,
+      organizationId: orgId,
+      actorType: "system",
+      metadata: { reason: policyResult.reason, amount: body.amount },
+    }).catch(() => {});
     return res.status(403).json({ transaction: tx, blocked: true, reason: policyResult.reason });
   }
 
@@ -132,6 +147,11 @@ transactionsRouter.post("/", async (req: Request, res: Response) => {
       },
       include: { approval: true },
     });
+    dispatchWebhook({
+      event: "approval.required",
+      organizationId: orgId,
+      data: { transaction: tx },
+    }).catch(() => {});
     return res.status(202).json({ transaction: tx, requiresApproval: true });
   }
 
