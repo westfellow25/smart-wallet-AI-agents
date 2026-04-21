@@ -116,6 +116,32 @@ vault = AgentVault(api_key="av_live_...")
 tx = vault.spend(amount=5.00, category="api-call")
 ```
 
+## Testing
+
+```bash
+# Run all API tests (unit + integration)
+cd apps/api && npm test
+
+# Watch mode
+npm run test:watch
+
+# With coverage
+npm run test:coverage
+```
+
+Tests include:
+- **Unit tests** for policy engine (rules, categories, time windows, multi-policy)
+- **Unit tests** for API key generation + verification (bcrypt)
+- **Integration tests** for auth flow (register, login, bad credentials) using supertest + mocked Prisma
+
+## CI/CD
+
+GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push to `main` and PR:
+- API: lint (tsc), Prisma generate, build, tests
+- Dashboard: type check, Next.js build
+- TypeScript SDK: build
+- Python SDK: install + import check
+
 ## Deployment
 
 - **Dashboard** → Vercel (`vercel.json` included)

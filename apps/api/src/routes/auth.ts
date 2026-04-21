@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import jwt, { SignOptions } from "jsonwebtoken";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { AppError } from "../middleware/errorHandler";
@@ -58,7 +58,7 @@ authRouter.post("/register", async (req: Request, res: Response) => {
   const token = jwt.sign(
     { userId: user.id, organizationId: org.id, role: user.role },
     process.env.JWT_SECRET || "dev-secret",
-    { expiresIn: process.env.JWT_EXPIRES_IN || "7d" },
+    { expiresIn: (process.env.JWT_EXPIRES_IN || "7d") as SignOptions["expiresIn"] },
   );
 
   res.status(201).json({
@@ -90,7 +90,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
   const token = jwt.sign(
     { userId: user.id, organizationId: user.organizationId, role: user.role },
     process.env.JWT_SECRET || "dev-secret",
-    { expiresIn: process.env.JWT_EXPIRES_IN || "7d" },
+    { expiresIn: (process.env.JWT_EXPIRES_IN || "7d") as SignOptions["expiresIn"] },
   );
 
   res.json({

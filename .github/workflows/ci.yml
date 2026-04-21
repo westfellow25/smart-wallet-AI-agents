@@ -1,0 +1,109 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  api:
+    name: API (lint, build, test)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Generate Prisma Client
+        working-directory: apps/api
+        run: npx prisma generate
+
+      - name: Type check
+        working-directory: apps/api
+        run: npm run lint
+
+      - name: Build
+        working-directory: apps/api
+        run: npm run build
+
+      - name: Run tests
+        working-directory: apps/api
+        env:
+          NODE_ENV: test
+          JWT_SECRET: test-secret
+        run: npm test
+
+  dashboard:
+    name: Dashboard (lint, build)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Type check dashboard
+        working-directory: apps/dashboard
+        run: npx tsc --noEmit
+
+      - name: Build dashboard
+        working-directory: apps/dashboard
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:3001
+        run: npm run build
+
+  sdk:
+    name: SDK (type check, build)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build TS SDK
+        working-directory: packages/sdk
+        run: npm run build
+
+  python-sdk:
+    name: Python SDK
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package
+        working-directory: packages/python-sdk
+        run: pip install -e .
+
+      - name: Import check
+        working-directory: packages/python-sdk
+        run: python -c "from agentvault import AgentVault, Transaction, Wallet; print('OK')"

@@ -153,14 +153,17 @@ analyticsRouter.get("/by-agent", async (req: Request, res: Response) => {
     _count: true,
   });
 
+  // Filter out deposits (null agentId) from by-agent breakdown
+  const withAgents = rows.filter((r): r is typeof r & { agentId: string } => r.agentId !== null);
+
   const agents = await prisma.agent.findMany({
-    where: { id: { in: rows.map((r) => r.agentId) } },
+    where: { id: { in: withAgents.map((r) => r.agentId) } },
     select: { id: true, name: true, type: true },
   });
   const agentMap = new Map(agents.map((a) => [a.id, a]));
 
   res.json({
-    byAgent: rows.map((r) => ({
+    byAgent: withAgents.map((r) => ({
       agentId: r.agentId,
       agentName: agentMap.get(r.agentId)?.name || "Unknown",
       agentType: agentMap.get(r.agentId)?.type || "unknown",

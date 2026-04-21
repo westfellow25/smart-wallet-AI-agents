@@ -6,27 +6,27 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 
 export default function LoginPage() {
-  const { login, user, loading } = useAuth();
+  const { login, user, loading: authLoading } = useAuth();
   const router = useRouter();
-
-  useEffect(() => {
-    if (!loading && user) router.push("/dashboard");
-  }, [loading, user, router]);
   const [email, setEmail] = useState("admin@acme.ai");
   const [password, setPassword] = useState("demo1234");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && user) router.push("/dashboard");
+  }, [authLoading, user, router]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError("");
-    setLoading(true);
+    setSubmitting(true);
     try {
       await login(email, password);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   }
 
@@ -72,10 +72,10 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={submitting}
               className="w-full rounded-lg bg-vault-600 py-2.5 text-sm font-medium text-white hover:bg-vault-700 disabled:opacity-50"
             >
-              {loading ? "Signing in..." : "Sign in"}
+              {submitting ? "Signing in..." : "Sign in"}
             </button>
           </form>
 

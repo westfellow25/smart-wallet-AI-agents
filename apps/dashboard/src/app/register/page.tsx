@@ -6,12 +6,8 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 
 export default function RegisterPage() {
-  const { register, user, loading } = useAuth();
+  const { register, user, loading: authLoading } = useAuth();
   const router = useRouter();
-
-  useEffect(() => {
-    if (!loading && user) router.push("/dashboard");
-  }, [loading, user, router]);
   const [form, setForm] = useState({
     organizationName: "",
     name: "",
@@ -19,7 +15,11 @@ export default function RegisterPage() {
     password: "",
   });
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && user) router.push("/dashboard");
+  }, [authLoading, user, router]);
 
   function update(field: string, value: string) {
     setForm((f) => ({ ...f, [field]: value }));
@@ -28,13 +28,13 @@ export default function RegisterPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError("");
-    setLoading(true);
+    setSubmitting(true);
     try {
       await register(form);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   }
 
@@ -102,10 +102,10 @@ export default function RegisterPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={submitting}
               className="w-full rounded-lg bg-vault-600 py-2.5 text-sm font-medium text-white hover:bg-vault-700 disabled:opacity-50"
             >
-              {loading ? "Creating account..." : "Create account"}
+              {submitting ? "Creating account..." : "Create account"}
             </button>
           </form>
 

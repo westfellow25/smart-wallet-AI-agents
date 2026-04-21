@@ -72,7 +72,7 @@ agentsRouter.post("/", async (req: Request, res: Response) => {
       name: body.name,
       description: body.description,
       type: body.type,
-      metadata: body.metadata,
+      metadata: body.metadata as never,
       walletId: body.walletId,
       organizationId: req.user!.organizationId,
     },
@@ -99,7 +99,7 @@ agentsRouter.patch("/:id", async (req: Request, res: Response) => {
       id: req.params.id,
       organizationId: req.user!.organizationId,
     },
-    data: body,
+    data: body as never,
   });
 
   if (result.count === 0) throw new AppError(404, "Agent not found");
