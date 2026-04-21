@@ -1,11 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useState, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user) router.push("/dashboard");
+  }, [loading, user, router]);
   const [email, setEmail] = useState("admin@acme.ai");
   const [password, setPassword] = useState("demo1234");
   const [error, setError] = useState("");

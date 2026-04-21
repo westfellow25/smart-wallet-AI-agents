@@ -1,14 +1,14 @@
 import { Router, Request, Response } from "express";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
-import { authenticate } from "../middleware/auth";
+import { authenticateApiKeyOrJwt, requireScope } from "../middleware/apiKeyAuth";
 import { AppError } from "../middleware/errorHandler";
 import { evaluatePolicies } from "../services/policyEngine";
 import { dispatchWebhook } from "../services/webhooks";
 import { logAudit } from "../services/audit";
 
 export const transactionsRouter = Router();
-transactionsRouter.use(authenticate);
+transactionsRouter.use(authenticateApiKeyOrJwt);
 
 // ─── List transactions ───────────────────────────────────────
 
@@ -62,7 +62,7 @@ transactionsRouter.get("/:id", async (req: Request, res: Response) => {
 
 const createTxSchema = z.object({
   amount: z.number().positive(),
-  agentId: z.string().uuid(),
+  agentId: z.string().uuid().optional(),
   category: z.string().optional(),
   description: z.string().optional(),
   merchantName: z.string().optional(),
@@ -70,13 +70,22 @@ const createTxSchema = z.object({
   metadata: z.record(z.unknown()).optional(),
 });
 
-transactionsRouter.post("/", async (req: Request, res: Response) => {
+transactionsRouter.post(
+  "/",
+  requireScope("transactions:write"),
+  async (req: Request, res: Response) => {
   const body = createTxSchema.parse(req.body);
   const orgId = req.user!.organizationId;
 
+  // Auto-fill agentId from API key if not provided
+  const agentId = body.agentId || req.apiKeyAgentId;
+  if (!agentId) {
+    throw new AppError(400, "agentId required (or use an agent-scoped API key)");
+  }
+
   // Load agent + wallet
   const agent = await prisma.agent.findFirst({
-    where: { id: body.agentId, organizationId: orgId },
+    where: { id: agentId, organizationId: orgId },
     include: {
       wallet: true,
       policies: { include: { policy: true } },
@@ -189,6 +198,9 @@ const reviewSchema = z.object({
 });
 
 transactionsRouter.post("/:id/review", async (req: Request, res: Response) => {
+  if (req.user!.role === "api") {
+    throw new AppError(403, "Approvals require a user account (not an API key)");
+  }
   const { action, note } = reviewSchema.parse(req.body);
   const orgId = req.user!.organizationId;
 

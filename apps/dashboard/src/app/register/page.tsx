@@ -1,11 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useState, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 
 export default function RegisterPage() {
-  const { register } = useAuth();
+  const { register, user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user) router.push("/dashboard");
+  }, [loading, user, router]);
   const [form, setForm] = useState({
     organizationName: "",
     name: "",

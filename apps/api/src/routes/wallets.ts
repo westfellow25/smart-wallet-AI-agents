@@ -1,11 +1,25 @@
 import { Router, Request, Response } from "express";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
-import { authenticate } from "../middleware/auth";
+import { authenticateApiKeyOrJwt } from "../middleware/apiKeyAuth";
 import { AppError } from "../middleware/errorHandler";
 
 export const walletsRouter = Router();
-walletsRouter.use(authenticate);
+walletsRouter.use(authenticateApiKeyOrJwt);
+
+// ─── Me (wallet scoped to current API key's agent) ───────────
+
+walletsRouter.get("/me", async (req: Request, res: Response) => {
+  if (!req.apiKeyAgentId) {
+    throw new AppError(400, "This endpoint requires an agent-scoped API key");
+  }
+  const agent = await prisma.agent.findFirst({
+    where: { id: req.apiKeyAgentId, organizationId: req.user!.organizationId },
+    include: { wallet: true },
+  });
+  if (!agent) throw new AppError(404, "Agent wallet not found");
+  res.json({ wallet: agent.wallet });
+});
 
 // ─── List wallets ────────────────────────────────────────────
 
@@ -123,7 +137,6 @@ walletsRouter.post("/:id/deposit", async (req: Request, res: Response) => {
         status: "COMPLETED",
         description: "Manual deposit",
         walletId: wallet.id,
-        agentId: wallet.id, // placeholder — deposits don't have agents
         organizationId: req.user!.organizationId,
       },
     }),

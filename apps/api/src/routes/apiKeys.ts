@@ -38,6 +38,16 @@ const createSchema = z.object({
 
 apiKeysRouter.post("/", async (req: Request, res: Response) => {
   const body = createSchema.parse(req.body);
+
+  // If an agentId is provided, verify it belongs to this org
+  if (body.agentId) {
+    const agent = await prisma.agent.findFirst({
+      where: { id: body.agentId, organizationId: req.user!.organizationId },
+      select: { id: true },
+    });
+    if (!agent) throw new AppError(404, "Agent not found");
+  }
+
   const { key, prefix, hash } = generateApiKey("live");
   const hashed = await hash;
 

@@ -14,6 +14,7 @@ export interface AgentVaultConfig {
 
 export interface SpendParams {
   amount: number;
+  agentId?: string;
   category?: string;
   description?: string;
   merchantName?: string;

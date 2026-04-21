@@ -5,6 +5,7 @@ import { AuthProvider } from "@/lib/auth";
 export const metadata: Metadata = {
   title: "AgentVault — Smart Wallet for AI Agents",
   description: "Corporate wallet infrastructure for AI agents. Set budgets, enforce policies, audit every transaction.",
+  icons: { icon: "/favicon.svg" },
 };
 
 export default function RootLayout({
