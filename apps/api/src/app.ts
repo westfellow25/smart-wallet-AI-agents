@@ -15,6 +15,7 @@ import { webhooksRouter } from "./routes/webhooks";
 import { analyticsRouter } from "./routes/analytics";
 import { auditRouter } from "./routes/audit";
 import { billingRouter } from "./routes/billing";
+import { playgroundRouter } from "./routes/playground";
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use("/api/v1/webhooks", standardLimiter, webhooksRouter);
 app.use("/api/v1/analytics", standardLimiter, analyticsRouter);
 app.use("/api/v1/audit", standardLimiter, auditRouter);
 app.use("/api/v1/billing", standardLimiter, billingRouter);
+app.use("/api/v1/playground", standardLimiter, playgroundRouter);
 
 app.use(errorHandler);
 

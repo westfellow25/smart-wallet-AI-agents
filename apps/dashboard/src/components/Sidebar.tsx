@@ -5,14 +5,15 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 
 const navItems = [
-  { label: "Dashboard", href: "/dashboard", icon: "\u25A6" },
-  { label: "Wallets", href: "/dashboard/wallets", icon: "\u25A4" },
-  { label: "Agents", href: "/dashboard/agents", icon: "\u25C9" },
-  { label: "Transactions", href: "/dashboard/transactions", icon: "\u25A7" },
-  { label: "Policies", href: "/dashboard/policies", icon: "\u26E8" },
-  { label: "API Keys", href: "/dashboard/api-keys", icon: "\u26B7" },
-  { label: "Webhooks", href: "/dashboard/webhooks", icon: "\u2943" },
-  { label: "Settings", href: "/dashboard/settings", icon: "\u2699" },
+  { label: "Dashboard", href: "/dashboard", icon: "▦" },
+  { label: "Playground", href: "/dashboard/playground", icon: "⚡", highlight: true },
+  { label: "Wallets", href: "/dashboard/wallets", icon: "▤" },
+  { label: "Agents", href: "/dashboard/agents", icon: "◉" },
+  { label: "Transactions", href: "/dashboard/transactions", icon: "▧" },
+  { label: "Policies", href: "/dashboard/policies", icon: "⛨" },
+  { label: "API Keys", href: "/dashboard/api-keys", icon: "⚷" },
+  { label: "Webhooks", href: "/dashboard/webhooks", icon: "⥃" },
+  { label: "Settings", href: "/dashboard/settings", icon: "⚙" },
 ];
 
 export function Sidebar() {
@@ -38,11 +39,18 @@ export function Sidebar() {
               className={`mb-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                 active
                   ? "bg-vault-50 text-vault-700"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  : item.highlight
+                    ? "bg-amber-50 text-amber-800 hover:bg-amber-100"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
               }`}
             >
               <span className="w-4 text-center text-xs">{item.icon}</span>
               {item.label}
+              {item.highlight && !active && (
+                <span className="ml-auto rounded-full bg-amber-200 px-1.5 py-0.5 text-[9px] font-bold uppercase text-amber-900">
+                  Live
+                </span>
+              )}
             </Link>
           );
         })}
