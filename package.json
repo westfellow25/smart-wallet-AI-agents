@@ -10,9 +10,14 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
+    "test": "cd apps/api && npm test",
     "db:migrate": "cd apps/api && npx prisma migrate dev",
     "db:seed": "cd apps/api && npx prisma db seed",
-    "db:studio": "cd apps/api && npx prisma studio"
+    "db:studio": "cd apps/api && npx prisma studio",
+    "demo:start": "./scripts/demo-start.sh",
+    "demo:stop": "./scripts/demo-stop.sh",
+    "demo:live": "./scripts/live-demo.sh",
+    "demo:reset": "./scripts/demo-stop.sh && ./scripts/demo-start.sh"
   },
   "devDependencies": {
     "turbo": "^2.0.0"

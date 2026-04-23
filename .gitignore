@@ -19,6 +19,7 @@ build/
 
 # Logs
 *.log
+.demo-logs/
 
 # OS
 .DS_Store
