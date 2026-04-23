@@ -53,6 +53,10 @@ if [ ! -f apps/dashboard/.env.local ]; then
   cp apps/dashboard/.env.example apps/dashboard/.env.local
 fi
 
+# Prisma CLI reads .env from the apps/api dir when run from there,
+# so keep a copy alongside the schema.
+cp .env apps/api/.env
+
 # ─── Dependencies ────────────────────────────────────────────
 if [ ! -d node_modules ]; then
   log "Installing dependencies (first run, ~40s)..."
