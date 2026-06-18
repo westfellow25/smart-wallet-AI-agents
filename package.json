@@ -1,0 +1,14 @@
+{
+  "name": "agentvault",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Corporate wallet for AI agents — spending policies, approvals, audit trail",
+  "license": "MIT",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev --workspace apps/api"
+  }
+}

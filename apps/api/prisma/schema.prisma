@@ -1,0 +1,111 @@
+// AgentVault — data model
+// Организация владеет агентами, кошельками и политиками.
+// Каждая трата агента -> Transaction, прошедшая через Policy Engine.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AgentStatus {
+  ACTIVE
+  PAUSED
+  REVOKED
+}
+
+enum TransactionStatus {
+  APPROVED // прошла все политики
+  PENDING  // ждёт человеческого одобрения
+  BLOCKED  // нарушила политику
+  REJECTED // человек отклонил
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  agents       Agent[]
+  policies     Policy[]
+  wallets      Wallet[]
+  transactions Transaction[]
+}
+
+model Agent {
+  id        String      @id @default(cuid())
+  orgId     String
+  name      String
+  apiKey    String      @unique // секрет, который агент шлёт в заголовке
+  status    AgentStatus @default(ACTIVE)
+  createdAt DateTime    @default(now())
+
+  org          Organization  @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  wallet       Wallet?
+  transactions Transaction[]
+
+  @@index([orgId])
+}
+
+model Wallet {
+  id       String @id @default(cuid())
+  orgId    String
+  agentId  String @unique
+  currency String @default("USD")
+
+  // Баланс и дневной счётчик трат (в минимальных единицах — центах).
+  balance      Int      @default(0)
+  dailySpent   Int      @default(0)
+  dailyResetAt DateTime @default(now())
+
+  org   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  agent Agent        @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+}
+
+model Policy {
+  id    String @id @default(cuid())
+  orgId String
+  name  String
+
+  // Лимиты в центах. null = без ограничения.
+  maxPerTransaction  Int?
+  dailyLimit         Int?
+  requireApprovalOver Int?
+
+  // Разрешённые категории трат. Пустой массив = разрешено всё.
+  allowedCategories String[] @default([])
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  org Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+}
+
+model Transaction {
+  id       String            @id @default(cuid())
+  orgId    String
+  agentId  String
+  amount   Int // в центах
+  currency String            @default("USD")
+  merchant String
+  category String
+  status   TransactionStatus
+  reason   String? // почему BLOCKED / PENDING
+  createdAt DateTime         @default(now())
+  decidedAt DateTime? // когда человек одобрил/отклонил
+  decidedBy String?
+
+  org   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  agent Agent        @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+  @@index([agentId])
+  @@index([status])
+}
