@@ -73,6 +73,7 @@ export default function Billing() {
         <nav className="nav">
           <Link href="/">Home</Link>
           <Link href="/dashboard">Control Tower</Link>
+          <Link href="/agents">Agents</Link>
           <Link href="/cards">Cards</Link>
           <span className="active">Billing</span>
         </nav>

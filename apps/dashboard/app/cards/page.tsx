@@ -42,6 +42,7 @@ export default function Cards() {
         <nav className="nav">
           <Link href="/">Home</Link>
           <Link href="/dashboard">Control Tower</Link>
+          <Link href="/agents">Agents</Link>
           <span className="active">Cards</span>
           <Link href="/billing">Billing</Link>
         </nav>

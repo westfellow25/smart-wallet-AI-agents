@@ -37,6 +37,16 @@ export type Anomaly = {
   at: string;
 };
 
+export type Policy = {
+  id: string;
+  name: string;
+  maxPerTransaction: number | null;
+  dailyLimit: number | null;
+  requireApprovalOver: number | null;
+  allowedCategories: string[];
+  isActive: boolean;
+};
+
 export type CardNetwork = "VISA" | "USDC_BASE";
 
 export type VirtualCard = {
