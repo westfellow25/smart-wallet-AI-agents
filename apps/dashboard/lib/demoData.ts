@@ -19,6 +19,12 @@ export const demoPlans = [
   { plan: "SCALE", name: "Scale", priceMonthly: 200000, maxAgents: null, monthlyVolume: null, highlights: ["∞ агентов", "Безлимит объём", "SSO / SAML", "Priority support"] },
 ];
 
+export const demoAnomalies = [
+  { id: "an1", severity: "HIGH", title: "Повторные блокировки политикой", detail: "3 заблокированных траты за 30 мин — возможен скомпрометированный агент или prompt-injection", agentName: "DevOps Sentinel", at: minutesAgo(9) },
+  { id: "an2", severity: "MEDIUM", title: "Выброс по сумме", detail: "$900.00 на \"Unknown Vendor\" — в 6.0× выше средней траты агента", agentName: "Marketing Bot", at: minutesAgo(33) },
+  { id: "an3", severity: "LOW", title: "Новый мерчант", detail: "Первая трата на \"TikTok Ads\" за последние 30 дней", agentName: "Marketing Bot", at: minutesAgo(52) },
+];
+
 export const demoCards = [
   { id: "c1", network: "USDC_BASE", last4: "4242", expMonth: 12, expYear: new Date().getUTCFullYear() + 3, status: "ACTIVE", agent: { name: "Marketing Bot" } },
   { id: "c2", network: "USDC_BASE", last4: "8810", expMonth: 9, expYear: new Date().getUTCFullYear() + 2, status: "ACTIVE", agent: { name: "Research Agent" } },

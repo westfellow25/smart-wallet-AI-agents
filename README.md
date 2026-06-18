@@ -63,6 +63,7 @@ money.
 - 🔑 **Agent-scoped API keys** — revoke or pause a single agent without touching the rest.
 - 💰 **Usage-based billing** — four subscription tiers ($0 → $2,000/mo) with Stripe Checkout and plan-based agent limits. Runs in dev mode without keys.
 - 💳 **Virtual cards** — issue one card per agent (USDC on Base L2 or VISA), freeze/unfreeze instantly; every card spends through the same Policy Engine.
+- 🚨 **Anomaly detection** — flags repeated policy blocks (possible compromise/prompt-injection), spend-velocity spikes, and amount outliers, ranked by severity.
 
 * * *
 
