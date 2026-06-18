@@ -5,6 +5,7 @@ import helmet from "helmet";
 import { agentsRouter } from "./routes/agents";
 import { policiesRouter } from "./routes/policies";
 import { transactionsRouter } from "./routes/transactions";
+import { cardsRouter } from "./routes/cards";
 import { billingRouter, stripeWebhookHandler } from "./routes/billing";
 
 const app = express();
@@ -29,6 +30,7 @@ app.get("/health", (_req, res) => {
 app.use("/v1/agents", agentsRouter);
 app.use("/v1/policies", policiesRouter);
 app.use("/v1/transactions", transactionsRouter);
+app.use("/v1/cards", cardsRouter);
 app.use("/v1/billing", billingRouter);
 
 // Глобальный обработчик ошибок.

@@ -673,3 +673,98 @@ body {
   .feature-grid, .plan-row { grid-template-columns: 1fr 1fr; }
   .flow-arrow { display: none; }
 }
+
+/* ============ Virtual cards ============ */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.vcard {
+  position: relative;
+  border-radius: 18px;
+  padding: 22px;
+  min-height: 230px;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  background: linear-gradient(135deg, #4b2fb8, #7c5cff 55%, #9d7bff);
+  box-shadow: 0 20px 50px rgba(124, 92, 255, 0.3);
+  overflow: hidden;
+}
+.vcard.visa {
+  background: linear-gradient(135deg, #1a1f3a, #2a3357 60%, #3b4a82);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+.vcard.frozen { filter: grayscale(0.7) brightness(0.8); }
+.vcard::after {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+}
+.vcard-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.vchip {
+  width: 42px;
+  height: 30px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #f5d77a, #d4a72c);
+}
+.vstatus {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+.vstatus.a { background: rgba(46, 204, 113, 0.25); color: #b6f5d0; }
+.vstatus.f { background: rgba(255, 255, 255, 0.2); color: #fff; }
+.vnum {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 21px;
+  letter-spacing: 2px;
+  margin: 22px 0 18px;
+}
+.vrow { display: flex; gap: 36px; }
+.vlabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  opacity: 0.7;
+}
+.vval { font-size: 15px; font-weight: 650; margin-top: 2px; }
+.vbadges { display: flex; gap: 8px; margin-top: 16px; }
+.vbadge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.18);
+}
+.vbadge.base { background: #0052ff; }
+.vfreeze {
+  margin-top: auto;
+  margin-top: 18px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 9px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.vfreeze:hover { background: rgba(255, 255, 255, 0.28); }
+
+@media (max-width: 860px) {
+  .card-grid { grid-template-columns: 1fr; }
+}
