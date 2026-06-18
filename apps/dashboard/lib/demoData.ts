@@ -19,6 +19,12 @@ export const demoPlans = [
   { plan: "SCALE", name: "Scale", priceMonthly: 200000, maxAgents: null, monthlyVolume: null, highlights: ["∞ агентов", "Безлимит объём", "SSO / SAML", "Priority support"] },
 ];
 
+export const demoCards = [
+  { id: "c1", network: "USDC_BASE", last4: "4242", expMonth: 12, expYear: new Date().getUTCFullYear() + 3, status: "ACTIVE", agent: { name: "Marketing Bot" } },
+  { id: "c2", network: "USDC_BASE", last4: "8810", expMonth: 9, expYear: new Date().getUTCFullYear() + 2, status: "ACTIVE", agent: { name: "Research Agent" } },
+  { id: "c3", network: "VISA", last4: "0571", expMonth: 4, expYear: new Date().getUTCFullYear() + 4, status: "FROZEN", agent: { name: "DevOps Sentinel" } },
+];
+
 export const demoSubscription = {
   plan: "GROWTH",
   status: "ACTIVE",

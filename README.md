@@ -62,6 +62,7 @@ money.
 - 💳 **Per-agent wallets** — each agent gets its own balance and daily-spend counter, reset automatically each day.
 - 🔑 **Agent-scoped API keys** — revoke or pause a single agent without touching the rest.
 - 💰 **Usage-based billing** — four subscription tiers ($0 → $2,000/mo) with Stripe Checkout and plan-based agent limits. Runs in dev mode without keys.
+- 💳 **Virtual cards** — issue one card per agent (USDC on Base L2 or VISA), freeze/unfreeze instantly; every card spends through the same Policy Engine.
 
 * * *
 
@@ -186,7 +187,8 @@ if (d.approved) runCampaign();
 - ✅ **Phase 2 — Control Tower:** live transaction feed, KPIs, pending approvals, agent wallets
 - ✅ **Phase 3 — SDKs:** drop-in JS/TS + Python SDKs with example agents
 - ✅ **Phase 4a — Billing:** Stripe subscriptions (4 plans), plan-based agent limits, pricing page, webhooks
-- 🟡 **Phase 4b — Polish:** marketing landing + CI ✅ · virtual cards, USDC on Base L2 ⬜
+- ✅ **Phase 4b — Polish:** marketing landing, CI, virtual cards (USDC on Base L2) with freeze/unfreeze
+- ⬜ **Phase 5 — On-chain:** real card issuing + USDC settlement on Base
 
 * * *
 

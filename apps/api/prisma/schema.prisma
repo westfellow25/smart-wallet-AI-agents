@@ -38,6 +38,16 @@ enum SubscriptionStatus {
   INCOMPLETE
 }
 
+enum CardNetwork {
+  VISA
+  USDC_BASE // USDC-карта на Base L2
+}
+
+enum CardStatus {
+  ACTIVE
+  FROZEN
+}
+
 model Organization {
   id        String   @id @default(cuid())
   name      String
@@ -48,6 +58,7 @@ model Organization {
   wallets      Wallet[]
   transactions Transaction[]
   subscription Subscription?
+  cards        VirtualCard[]
 }
 
 model Subscription {
@@ -79,6 +90,26 @@ model Agent {
   org          Organization  @relation(fields: [orgId], references: [id], onDelete: Cascade)
   wallet       Wallet?
   transactions Transaction[]
+  card         VirtualCard?
+
+  @@index([orgId])
+}
+
+model VirtualCard {
+  id      String @id @default(cuid())
+  orgId   String
+  agentId String @unique
+
+  network  CardNetwork @default(USDC_BASE)
+  last4    String // последние 4 цифры (только для отображения)
+  expMonth Int
+  expYear  Int
+  status   CardStatus  @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+
+  org   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  agent Agent        @relation(fields: [agentId], references: [id], onDelete: Cascade)
 
   @@index([orgId])
 }

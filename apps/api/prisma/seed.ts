@@ -35,6 +35,18 @@ async function main() {
     },
   });
 
+  // Виртуальная USDC-карта на Base L2 для демо-агента.
+  await prisma.virtualCard.create({
+    data: {
+      orgId: org.id,
+      agentId: agent.id,
+      network: "USDC_BASE",
+      last4: "4242",
+      expMonth: 12,
+      expYear: new Date().getUTCFullYear() + 3,
+    },
+  });
+
   console.log("\nSeed готов. Сохрани эти значения для теста API:\n");
   console.log("  ORG_ID     =", org.id);
   console.log("  AGENT_ID   =", agent.id);

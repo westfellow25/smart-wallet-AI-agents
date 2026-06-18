@@ -25,3 +25,15 @@ export type DashboardData = {
   agents: Agent[];
   source: "live" | "demo"; // откуда данные: реальный API или демо-фолбэк
 };
+
+export type CardNetwork = "VISA" | "USDC_BASE";
+
+export type VirtualCard = {
+  id: string;
+  network: CardNetwork;
+  last4: string;
+  expMonth: number;
+  expYear: number;
+  status: "ACTIVE" | "FROZEN";
+  agent?: { name: string };
+};

@@ -81,6 +81,7 @@ export default function Dashboard() {
         <nav className="nav">
           <Link href="/">Home</Link>
           <span className="active">Control Tower</span>
+          <Link href="/cards">Cards</Link>
           <Link href="/billing">Billing</Link>
         </nav>
         <div className="source-pill">
