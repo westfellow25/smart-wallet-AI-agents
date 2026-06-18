@@ -29,7 +29,7 @@ AI-агентов в продакшене. Когда агент тратит д
 agentvault/
 ├── apps/
 │   ├── api/          # Node.js + Express + TypeScript backend (есть)
-│   └── dashboard/    # Next.js admin UI (скоро)
+│   └── dashboard/    # Next.js admin UI — live-feed, approvals (есть)
 ├── packages/
 │   └── sdk/          # SDK для агентов (скоро)
 ├── docker-compose.yml  # Postgres + Redis
@@ -65,6 +65,24 @@ npm run dev
 # -> http://localhost:4000/health
 ```
 
+### Dashboard (Control Tower)
+
+```bash
+cd apps/dashboard
+npm install
+npm run dev
+# -> http://localhost:3000
+```
+
+Дашборд работает сразу на **демо-данных** (live-лента, KPI, approve/reject),
+даже без запущенного API — удобно для скриншотов и демо инвестору.
+Чтобы подключить к реальному API, задай переменные окружения:
+
+```bash
+AGENTVAULT_API_URL=http://localhost:4000
+AGENTVAULT_ORG_ID=<ORG_ID из npm run db:seed>
+```
+
 ## API (текущие эндпоинты)
 
 | Метод  | Путь                          | Описание                              |
@@ -81,8 +99,8 @@ npm run dev
 
 ## Roadmap (57 дней -> MVP)
 
-- **Фаза 1 (день 1–14):** Backend foundation — схема, policy engine, audit trail (мы здесь)
-- **Фаза 2 (день 15–30):** Dashboard (Next.js), live-feed, approvals UI
+- **Фаза 1 (день 1–14):** Backend foundation — схема, policy engine, audit trail (готово)
+- **Фаза 2 (день 15–30):** Dashboard (Next.js), live-feed, approvals UI (готово) — *мы здесь*
 - **Фаза 3 (день 31–45):** SDK для агентов, виртуальные карты, USDC/Base
 - **Фаза 4 (день 46–57):** Биллинг (Stripe), полировка, demo для инвестора
 
