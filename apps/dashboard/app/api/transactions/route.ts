@@ -5,7 +5,7 @@ import { demoTransactions, demoAgents } from "@/lib/demoData";
 // GET /api/transactions — отдаёт транзакции + агентов одним вызовом.
 // Падает обратно на демо-данные, если API недоступен.
 export async function GET() {
-  if (isConfigured()) {
+  if (await isConfigured()) {
     try {
       const [transactions, agents] = await Promise.all([
         fetchTransactions(),

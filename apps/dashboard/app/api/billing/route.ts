@@ -4,7 +4,7 @@ import { demoPlans, demoSubscription } from "@/lib/demoData";
 
 // GET /api/billing — тарифы + текущая подписка. Demo-fallback, если API офлайн.
 export async function GET() {
-  if (isConfigured()) {
+  if (await isConfigured()) {
     try {
       const [plans, subscription] = await Promise.all([
         fetchPlans(),

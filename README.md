@@ -77,6 +77,7 @@ money.
 - 🔌 **Drop-in SDKs** — JS/TS and Python, both zero-to-minimal dependencies. Connect an agent in 3 lines.
 - 📟 **Live Control Tower** — a dashboard with KPI metrics, a real-time transaction feed, pending approvals, and per-agent wallet health.
 - 💳 **Per-agent wallets** — each agent gets its own balance and daily-spend counter, reset automatically each day.
+- 👤 **User accounts & auth** — email/password signup & login, JWT sessions, per-organization isolation (passwords hashed with bcrypt).
 - 🔑 **Agent-scoped API keys** — revoke or pause a single agent without touching the rest.
 - 🧑‍💻 **Self-serve admin UI** — provision agents, issue their cards, and author spending policies from the dashboard (no curl required).
 - 💰 **Usage-based billing** — four subscription tiers ($0 → $2,000/mo) with Stripe Checkout and plan-based agent limits. Runs in dev mode without keys.
@@ -178,6 +179,9 @@ npm install
 npm run dev                   # landing :3000 · Control Tower :3000/dashboard
 ```
 
+Sign in at `:3000/login` with the seeded demo account — **`demo@agentvault.dev`
+/ `demodemo`** — or just hit `/dashboard` to explore on built-in demo data.
+
 Connect a real agent with the SDK:
 
 ```ts
@@ -208,7 +212,8 @@ if (d.approved) runCampaign();
 - ✅ **Phase 4a — Billing:** Stripe subscriptions (4 plans), plan-based agent limits, pricing page, webhooks
 - ✅ **Phase 4b — Polish:** marketing landing, CI, virtual cards (USDC on Base L2) with freeze/unfreeze
 - ✅ **Phase 5 — Agent-to-agent payments:** transfers + invoices between agents, cleared through the Policy Engine
-- ⬜ **Phase 6 — On-chain:** real card issuing + USDC settlement on Base (x402-style HTTP 402 endpoint)
+- ✅ **Phase 6 — Auth & accounts:** email/password signup & login, JWT sessions, per-org isolation
+- ⬜ **Phase 7 — On-chain:** real card issuing + USDC settlement on Base (x402-style HTTP 402 endpoint)
 
 * * *
 

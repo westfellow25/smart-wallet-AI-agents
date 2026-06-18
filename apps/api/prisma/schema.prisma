@@ -44,6 +44,12 @@ enum PaymentRequestStatus {
   CANCELED
 }
 
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
 enum CardNetwork {
   VISA
   USDC_BASE // USDC-карта на Base L2
@@ -59,6 +65,7 @@ model Organization {
   name      String
   createdAt DateTime @default(now())
 
+  users           User[]
   agents          Agent[]
   policies        Policy[]
   wallets         Wallet[]
@@ -67,6 +74,21 @@ model Organization {
   cards           VirtualCard[]
   transfers       Transfer[]
   paymentRequests PaymentRequest[]
+}
+
+// Человек-пользователь дашборда (в отличие от Agent — это не бот).
+model User {
+  id           String   @id @default(cuid())
+  orgId        String
+  email        String   @unique
+  name         String?
+  passwordHash String
+  role         Role     @default(OWNER)
+  createdAt    DateTime @default(now())
+
+  org Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
 }
 
 model Subscription {

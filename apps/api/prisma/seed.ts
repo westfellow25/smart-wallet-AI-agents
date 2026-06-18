@@ -1,4 +1,5 @@
 import { randomBytes } from "node:crypto";
+import bcrypt from "bcryptjs";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -9,6 +10,17 @@ async function main() {
 
   const org = await prisma.organization.create({
     data: { name: "Acme AI Inc." },
+  });
+
+  // Демо-пользователь для входа в дашборд: demo@agentvault.dev / demodemo
+  await prisma.user.create({
+    data: {
+      orgId: org.id,
+      email: "demo@agentvault.dev",
+      name: "Demo Owner",
+      passwordHash: await bcrypt.hash("demodemo", 10),
+      role: "OWNER",
+    },
   });
 
   // Политика: до $500 за транзакцию, $2000 в день,

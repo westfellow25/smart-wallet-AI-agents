@@ -4,7 +4,7 @@ import { demoPolicies } from "@/lib/demoData";
 
 // GET /api/policies — список политик (demo-fallback).
 export async function GET() {
-  if (isConfigured()) {
+  if (await isConfigured()) {
     try {
       return NextResponse.json({ policies: await fetchPolicies(), source: "live" });
     } catch {
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     requireApprovalOver: num(body.requireApprovalOver),
     allowedCategories: Array.isArray(body.allowedCategories) ? body.allowedCategories : [],
   };
-  if (!isConfigured()) {
+  if (!(await isConfigured())) {
     return NextResponse.json({ id: "pol-" + Date.now(), isActive: true, ...payload, source: "demo" });
   }
   try {

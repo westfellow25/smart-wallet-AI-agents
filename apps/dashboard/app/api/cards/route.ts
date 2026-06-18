@@ -4,7 +4,7 @@ import { demoCards } from "@/lib/demoData";
 
 // GET /api/cards — виртуальные карты. Demo-fallback при офлайн-API.
 export async function GET() {
-  if (isConfigured()) {
+  if (await isConfigured()) {
     try {
       const cards = await fetchCards();
       return NextResponse.json({ cards, source: "live" });
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
   if (!agentId) {
     return NextResponse.json({ error: "agentId is required" }, { status: 400 });
   }
-  if (!isConfigured()) {
+  if (!(await isConfigured())) {
     return NextResponse.json({
       id: "card-" + Date.now(),
       agentId,

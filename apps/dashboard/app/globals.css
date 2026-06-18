@@ -911,3 +911,55 @@ body {
 .inv-head .amount { font-size: 18px; font-weight: 800; color: var(--brand-2); }
 .inv-memo { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
 .inv-foot { display: flex; align-items: center; justify-content: space-between; }
+
+/* ============ Auth ============ */
+.auth-wrap {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 30px 26px;
+}
+.auth-sub {
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 22px;
+}
+.auth-error {
+  background: var(--red-bg);
+  border: 1px solid var(--red);
+  color: var(--red);
+  font-size: 13px;
+  padding: 9px 12px;
+  border-radius: 9px;
+}
+.auth-switch {
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 16px;
+}
+.auth-switch button {
+  background: none;
+  border: none;
+  color: var(--brand-2);
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 13px;
+}
+.auth-demo {
+  text-align: center;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.auth-demo a { color: var(--muted); font-size: 13px; text-decoration: none; }
+.auth-demo a:hover { color: var(--text); }
