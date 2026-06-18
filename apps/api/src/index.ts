@@ -9,6 +9,7 @@ import { transactionsRouter } from "./routes/transactions";
 import { cardsRouter } from "./routes/cards";
 import { transfersRouter } from "./routes/transfers";
 import { paymentRequestsRouter } from "./routes/paymentRequests";
+import { x402Router } from "./routes/x402";
 import { anomaliesRouter } from "./routes/anomalies";
 import { billingRouter, stripeWebhookHandler } from "./routes/billing";
 
@@ -38,6 +39,7 @@ app.use("/v1/transactions", transactionsRouter);
 app.use("/v1/cards", cardsRouter);
 app.use("/v1/transfers", transfersRouter);
 app.use("/v1/payment-requests", paymentRequestsRouter);
+app.use("/v1/x402", x402Router);
 app.use("/v1/anomalies", anomaliesRouter);
 app.use("/v1/billing", billingRouter);
 

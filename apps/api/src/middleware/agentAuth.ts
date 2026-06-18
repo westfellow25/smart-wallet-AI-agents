@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { prisma } from "../lib/prisma";
+import { hashApiKey } from "../lib/apiKeys";
 
 // Расширяем Request, чтобы прокинуть аутентифицированного агента в роуты.
 declare global {
@@ -32,7 +33,9 @@ export async function agentAuth(
     return res.status(401).json({ error: "Missing API key" });
   }
 
-  const agent = await prisma.agent.findUnique({ where: { apiKey } });
+  const agent = await prisma.agent.findUnique({
+    where: { apiKeyHash: hashApiKey(apiKey) },
+  });
   if (!agent) {
     return res.status(401).json({ error: "Invalid API key" });
   }

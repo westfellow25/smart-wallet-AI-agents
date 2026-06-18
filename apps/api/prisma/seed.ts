@@ -1,6 +1,6 @@
-import { randomBytes } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { PrismaClient } from "@prisma/client";
+import { generateApiKey, hashApiKey } from "../src/lib/apiKeys";
 
 const prisma = new PrismaClient();
 
@@ -37,12 +37,12 @@ async function main() {
   });
 
   // Агент с кошельком на $1000.
-  const apiKey = "av_" + randomBytes(24).toString("hex");
+  const apiKey = generateApiKey();
   const agent = await prisma.agent.create({
     data: {
       orgId: org.id,
       name: "Marketing Bot",
-      apiKey,
+      apiKeyHash: hashApiKey(apiKey),
       wallet: { create: { orgId: org.id, balance: 100000, currency: "USD" } },
     },
   });
@@ -60,12 +60,12 @@ async function main() {
   });
 
   // Второй агент — чтобы демонстрировать agent-to-agent платежи.
-  const agent2Key = "av_" + randomBytes(24).toString("hex");
+  const agent2Key = generateApiKey();
   const agent2 = await prisma.agent.create({
     data: {
       orgId: org.id,
       name: "Data Provider Agent",
-      apiKey: agent2Key,
+      apiKeyHash: hashApiKey(agent2Key),
       wallet: { create: { orgId: org.id, balance: 20000, currency: "USD" } },
     },
   });

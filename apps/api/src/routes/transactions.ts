@@ -4,6 +4,7 @@ import { prisma } from "../lib/prisma";
 import { agentAuth } from "../middleware/agentAuth";
 import { requireOrg } from "../middleware/orgContext";
 import { evaluate } from "../lib/policyEngine";
+import { notifyPending } from "../lib/notify";
 
 export const transactionsRouter = Router();
 
@@ -80,6 +81,16 @@ transactionsRouter.post("/", agentAuth, async (req, res) => {
     }
     return created;
   });
+
+  if (decision.status === "PENDING") {
+    notifyPending({
+      kind: "transaction",
+      agentName: agent.name,
+      amount,
+      to: merchant,
+      reason: decision.reason,
+    });
+  }
 
   const httpStatus =
     decision.status === "APPROVED" ? 201 : decision.status === "PENDING" ? 202 : 200;

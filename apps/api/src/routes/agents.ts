@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { requireOrg } from "../middleware/orgContext";
 import { planLimits } from "../lib/plans";
+import { generateApiKey, hashApiKey } from "../lib/apiKeys";
 
 export const agentsRouter = Router();
 
@@ -37,13 +37,13 @@ agentsRouter.post("/", requireOrg, async (req, res) => {
     }
   }
 
-  const apiKey = "av_" + randomBytes(24).toString("hex");
+  const apiKey = generateApiKey();
 
   const agent = await prisma.agent.create({
     data: {
       orgId: req.orgId!,
       name,
-      apiKey,
+      apiKeyHash: hashApiKey(apiKey),
       wallet: {
         create: {
           orgId: req.orgId!,
@@ -55,8 +55,9 @@ agentsRouter.post("/", requireOrg, async (req, res) => {
     include: { wallet: true },
   });
 
-  // apiKey показываем ТОЛЬКО один раз, при создании.
-  res.status(201).json(agent);
+  // apiKey показываем ТОЛЬКО один раз, при создании; хеш не отдаём.
+  const { apiKeyHash, ...safe } = agent;
+  res.status(201).json({ ...safe, apiKey });
 });
 
 // GET /v1/agents — список агентов организации (без секретов).

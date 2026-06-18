@@ -110,12 +110,12 @@ model Subscription {
 }
 
 model Agent {
-  id        String      @id @default(cuid())
-  orgId     String
-  name      String
-  apiKey    String      @unique // секрет, который агент шлёт в заголовке
-  status    AgentStatus @default(ACTIVE)
-  createdAt DateTime    @default(now())
+  id         String      @id @default(cuid())
+  orgId      String
+  name       String
+  apiKeyHash String      @unique // sha256 от ключа; сам ключ не храним
+  status     AgentStatus @default(ACTIVE)
+  createdAt  DateTime    @default(now())
 
   org          Organization  @relation(fields: [orgId], references: [id], onDelete: Cascade)
   wallet       Wallet?
