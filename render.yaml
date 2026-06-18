@@ -1,0 +1,31 @@
+# Render Blueprint — провижинит AgentVault API + PostgreSQL одной кнопкой.
+# https://render.com/docs/blueprint-spec
+# В Render: New + → Blueprint → подключи репозиторий.
+services:
+  - type: web
+    name: agentvault-api
+    runtime: docker
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: agentvault-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true # Render сгенерит секрет сам
+      - key: PORT
+        value: 4000
+      - key: NODE_ENV
+        value: production
+      # После деплоя дашборда впиши сюда его URL (для Stripe success/cancel):
+      - key: DASHBOARD_URL
+        sync: false
+
+databases:
+  - name: agentvault-db
+    plan: free
+    databaseName: agentvault
+    user: agentvault
