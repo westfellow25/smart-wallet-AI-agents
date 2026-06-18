@@ -71,7 +71,8 @@ export default function Billing() {
           </div>
         </div>
         <nav className="nav">
-          <Link href="/">Control Tower</Link>
+          <Link href="/">Home</Link>
+          <Link href="/dashboard">Control Tower</Link>
           <span className="active">Billing</span>
         </nav>
         <div className="source-pill">

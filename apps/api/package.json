@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "nodemon --watch src --ext ts --exec \"ts-node src/index.ts\"",
     "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "ts-node --transpile-only test/policyEngine.test.ts",
     "start": "node dist/index.js",
     "db:push": "prisma db push",
     "db:seed": "ts-node prisma/seed.ts",

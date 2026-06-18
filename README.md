@@ -4,6 +4,8 @@
 
 ### Corporate wallet for AI agents — spending policies, approvals, audit trail.
 
+[![CI](https://github.com/westfellow25/smart-wallet-AI-agents/actions/workflows/ci.yml/badge.svg)](https://github.com/westfellow25/smart-wallet-AI-agents/actions/workflows/ci.yml)
+
 **If an AI agent is a new hire, AgentVault is its corporate card, its spending limit, and the manager who signs off on the big purchases.**
 
 </div>
@@ -108,8 +110,11 @@ AGENTVAULT_KEY=av_xxx npx ts-node examples/agent.ts
 # ⏸ $300 Meta Ads    -> PENDING  (above $200 approval threshold)
 # ⛔ $600 TikTok Ads  -> BLOCKED  (over $500 per-transaction limit)
 
-# 3. Open the Control Tower
-cd ../../apps/dashboard && npm install && npm run dev   # http://localhost:3000
+# 3. Open the product
+cd ../../apps/dashboard && npm install && npm run dev
+#   http://localhost:3000            -> landing page
+#   http://localhost:3000/dashboard  -> live Control Tower
+#   http://localhost:3000/billing    -> plans & subscription
 ```
 
 The dashboard also runs on built-in demo data when the API is offline, so it
@@ -150,7 +155,7 @@ Then in another terminal:
 ```bash
 cd apps/dashboard
 npm install
-npm run dev                   # Control Tower on :3000
+npm run dev                   # landing :3000 · Control Tower :3000/dashboard
 ```
 
 Connect a real agent with the SDK:
@@ -181,7 +186,7 @@ if (d.approved) runCampaign();
 - ✅ **Phase 2 — Control Tower:** live transaction feed, KPIs, pending approvals, agent wallets
 - ✅ **Phase 3 — SDKs:** drop-in JS/TS + Python SDKs with example agents
 - ✅ **Phase 4a — Billing:** Stripe subscriptions (4 plans), plan-based agent limits, pricing page, webhooks
-- ⬜ **Phase 4b — Polish:** virtual cards, USDC on Base L2, investor-ready demo
+- 🟡 **Phase 4b — Polish:** marketing landing + CI ✅ · virtual cards, USDC on Base L2 ⬜
 
 * * *
 

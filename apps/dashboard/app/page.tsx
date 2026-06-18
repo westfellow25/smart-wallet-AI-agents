@@ -1,215 +1,138 @@
-"use client";
-
-import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import type { Agent, Transaction, TxStatus } from "@/lib/types";
-import { money, timeAgo } from "@/lib/format";
 
-const FILTERS: (TxStatus | "ALL")[] = ["ALL", "APPROVED", "PENDING", "BLOCKED"];
-
-const categoryEmoji: Record<string, string> = {
-  ads: "📣", api: "🔌", saas: "🧩", compute: "🖥️", crypto: "🪙",
+export const metadata = {
+  title: "AgentVault — the corporate wallet for AI agents",
+  description:
+    "Spending policies, human approvals, and an audit trail for every dollar your AI agents move.",
 };
 
-export default function Dashboard() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [agents, setAgents] = useState<Agent[]>([]);
-  const [source, setSource] = useState<"live" | "demo">("demo");
-  const [filter, setFilter] = useState<TxStatus | "ALL">("ALL");
-  const [loaded, setLoaded] = useState(false);
+const features = [
+  { icon: "🛡️", title: "Policy Engine", text: "Per-transaction & daily limits, allowed categories, and approval thresholds — enforced before any money moves." },
+  { icon: "⏸", title: "Human-in-the-loop", text: "Anything over your threshold becomes PENDING and waits for a person to approve or reject." },
+  { icon: "🧾", title: "Immutable audit trail", text: "Every spend is logged with its decision and the exact reason it was approved, held, or blocked." },
+  { icon: "🔌", title: "Drop-in SDKs", text: "JS/TS and Python. Connect an agent in 3 lines — works with any agent framework." },
+  { icon: "📟", title: "Live Control Tower", text: "Real-time transaction feed, KPIs, pending approvals, and per-agent wallet health." },
+  { icon: "💳", title: "Per-agent wallets", text: "Each agent gets its own balance and daily-spend counter, auto-reset every day." },
+];
 
-  const load = useCallback(async () => {
-    try {
-      const res = await fetch("/api/transactions", { cache: "no-store" });
-      const data = await res.json();
-      setTransactions(data.transactions ?? []);
-      setAgents(data.agents ?? []);
-      setSource(data.source ?? "demo");
-    } catch {
-      /* keep previous */
-    } finally {
-      setLoaded(true);
-    }
-  }, []);
+const plans = [
+  { name: "Free", price: "$0", agents: "2 agents", popular: false },
+  { name: "Starter", price: "$199", agents: "5 agents", popular: false },
+  { name: "Growth", price: "$499", agents: "25 agents", popular: true },
+  { name: "Scale", price: "$2,000", agents: "∞ agents", popular: false },
+];
 
-  // Авто-обновление каждые 5 секунд — ощущение "живого" продукта.
-  useEffect(() => {
-    load();
-    const t = setInterval(load, 5000);
-    return () => clearInterval(t);
-  }, [load]);
-
-  async function decide(id: string, action: "approve" | "reject") {
-    // Оптимистично убираем из pending.
-    setTransactions((prev) =>
-      prev.map((t) =>
-        t.id === id ? { ...t, status: action === "approve" ? "APPROVED" : "REJECTED" } : t
-      )
-    );
-    await fetch(`/api/transactions/${id}/${action}`, { method: "POST" });
-    load();
-  }
-
-  const pending = transactions.filter((t) => t.status === "PENDING");
-
-  const kpis = useMemo(() => {
-    const approved = transactions.filter((t) => t.status === "APPROVED");
-    const blocked = transactions.filter((t) => t.status === "BLOCKED");
-    const spent = approved.reduce((s, t) => s + t.amount, 0);
-    const activeAgents = agents.filter((a) => a.status === "ACTIVE").length;
-    return {
-      spent,
-      activeAgents,
-      total: transactions.length,
-      blocked: blocked.length,
-      pending: pending.length,
-    };
-  }, [transactions, agents, pending.length]);
-
-  const visible = transactions.filter((t) => filter === "ALL" || t.status === filter);
-
+export default function Landing() {
   return (
-    <div className="app">
-      <header className="topbar">
+    <div className="lp">
+      <header className="lp-nav">
         <div className="brand">
           <div className="logo">AV</div>
-          <div>
-            <h1>AgentVault — Control Tower</h1>
-            <p>Corporate wallet for AI agents</p>
-          </div>
+          <strong>AgentVault</strong>
         </div>
         <nav className="nav">
-          <span className="active">Control Tower</span>
-          <Link href="/billing">Billing</Link>
+          <a href="#features">Features</a>
+          <a href="#pricing">Pricing</a>
+          <Link href="/dashboard">Live demo</Link>
+          <Link href="/dashboard" className="nav-cta">Open dashboard →</Link>
         </nav>
-        <div className="source-pill">
-          <span className={`dot ${source === "demo" ? "demo" : ""}`} />
-          {source === "live" ? "Live — connected to API" : "Demo data (API offline)"}
-        </div>
       </header>
 
-      <section className="kpis">
-        <Kpi label="Spent today" value={money(kpis.spent)} sub="across all agents" />
-        <Kpi label="Active agents" value={String(kpis.activeAgents)} sub={`${agents.length} total`} />
-        <Kpi label="Transactions" value={String(kpis.total)} sub="last 100" />
-        <Kpi label="Pending approval" value={String(kpis.pending)} sub="needs human" />
-        <Kpi label="Blocked" value={String(kpis.blocked)} sub="by policy" />
+      <section className="hero">
+        <div className="pill-tag">For companies running AI agents in production</div>
+        <h1>
+          The corporate wallet<br />for <span className="grad">AI agents</span>
+        </h1>
+        <p className="sub">
+          Your agents can spend money. AgentVault makes sure they spend it within
+          policy — with limits they can't exceed, human approvals for the big
+          calls, and an audit trail for every dollar.
+        </p>
+        <div className="hero-cta">
+          <Link href="/dashboard" className="btn-primary">See the live dashboard →</Link>
+          <Link href="/billing" className="btn-secondary">View pricing</Link>
+        </div>
+
+        <div className="code-card">
+          <div className="code-head"><span className="dot demo" /> agent.ts</div>
+          <pre>{`import { AgentVault } from "@agentvault/sdk";
+
+const vault = new AgentVault({ apiKey: process.env.AGENTVAULT_KEY! });
+
+const decision = await vault.spend({
+  amount: 30000,            // $300.00
+  merchant: "Meta Ads",
+  category: "ads",
+});
+
+decision.status   // "PENDING" — over the $200 approval threshold
+decision.approved // false — waits for a human in the dashboard`}</pre>
+        </div>
       </section>
 
-      <div className="grid">
-        <section className="panel">
-          <h2>
-            Live transaction feed
-            <span className="count">{visible.length} shown</span>
-          </h2>
-          <div className="filters">
-            {FILTERS.map((f) => (
-              <button
-                key={f}
-                className={filter === f ? "active" : ""}
-                onClick={() => setFilter(f)}
-              >
-                {f === "ALL" ? "All" : f.charAt(0) + f.slice(1).toLowerCase()}
-              </button>
-            ))}
-          </div>
-          {!loaded ? (
-            <div className="empty">Loading…</div>
-          ) : visible.length === 0 ? (
-            <div className="empty">No transactions</div>
-          ) : (
-            visible.map((t) => (
-              <div className="tx" key={t.id}>
-                <div className="avatar">{categoryEmoji[t.category] ?? "💳"}</div>
-                <div className="info">
-                  <div className="merchant">{t.merchant}</div>
-                  <div className="meta">
-                    {t.agent?.name ?? "agent"} · {t.category} · {timeAgo(t.createdAt)}
-                  </div>
-                </div>
-                <div className="amount">{money(t.amount, t.currency)}</div>
-                <span className={`badge ${t.status}`}>{t.status}</span>
-              </div>
-            ))
-          )}
-        </section>
+      <section className="problem">
+        <h2>A non-human employee with a credit card and no judgment</h2>
+        <p>
+          The moment an AI agent can move money, you have a new risk: a buggy
+          prompt, a hallucinated decision, or a prompt-injection attack drains the
+          budget at 3am. Today teams "solve" this with a shared API key, a
+          spreadsheet, and hope. No limits. No approvals. No audit trail —
+          nothing a CFO or security team would ever sign off on.
+        </p>
+      </section>
 
-        <div>
-          <section className="panel">
-            <h2>
-              Pending approvals
-              <span className="count">{pending.length}</span>
-            </h2>
-            {pending.length === 0 ? (
-              <div className="empty">🎉 Nothing waiting</div>
-            ) : (
-              pending.map((t) => (
-                <div className="approval" key={t.id}>
-                  <div className="head">
-                    <div>
-                      <div className="merchant">{t.merchant}</div>
-                      <div className="meta">{t.agent?.name} · {t.category}</div>
-                    </div>
-                    <div className="amount">{money(t.amount, t.currency)}</div>
-                  </div>
-                  <div className="reason">{t.reason}</div>
-                  <div className="actions">
-                    <button className="btn approve" onClick={() => decide(t.id, "approve")}>
-                      ✓ Approve
-                    </button>
-                    <button className="btn reject" onClick={() => decide(t.id, "reject")}>
-                      ✕ Reject
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </section>
-
-          <div className="sep" />
-
-          <section className="panel">
-            <h2>
-              Agent wallets
-              <span className="count">{agents.length}</span>
-            </h2>
-            {agents.map((a) => {
-              const bal = a.wallet?.balance ?? 0;
-              const spent = a.wallet?.dailySpent ?? 0;
-              const total = bal + spent || 1;
-              const pct = Math.min(100, Math.round((spent / total) * 100));
-              const color = pct > 80 ? "var(--red)" : pct > 50 ? "var(--amber)" : "var(--green)";
-              return (
-                <div className="agent" key={a.id}>
-                  <div className="row">
-                    <span className="name">
-                      <span
-                        className="dot"
-                        style={{ background: a.status === "ACTIVE" ? "var(--green)" : "var(--muted)", boxShadow: "none" }}
-                      />
-                      {a.name}
-                    </span>
-                    <span className="bal">{money(bal)} left</span>
-                  </div>
-                  <div className="bar">
-                    <span style={{ width: `${pct}%`, background: color }} />
-                  </div>
-                </div>
-              );
-            })}
-          </section>
+      <section id="features" className="features">
+        <h2 className="section-title">Everything you need to let agents spend — safely</h2>
+        <div className="feature-grid">
+          {features.map((f) => (
+            <div className="feature" key={f.title}>
+              <div className="f-icon">{f.icon}</div>
+              <h3>{f.title}</h3>
+              <p>{f.text}</p>
+            </div>
+          ))}
         </div>
-      </div>
-    </div>
-  );
-}
+      </section>
 
-function Kpi({ label, value, sub }: { label: string; value: string; sub: string }) {
-  return (
-    <div className="kpi">
-      <div className="label">{label}</div>
-      <div className="value">{value}</div>
-      <div className="sub">{sub}</div>
+      <section className="flow">
+        <h2 className="section-title">How a single spend is judged</h2>
+        <div className="flow-row">
+          <div className="flow-step"><span>1</span>Agent calls <code>vault.spend()</code></div>
+          <div className="flow-arrow">→</div>
+          <div className="flow-step"><span>2</span>Policy Engine checks limits & category</div>
+          <div className="flow-arrow">→</div>
+          <div className="flow-step"><span>3</span>APPROVED · PENDING · BLOCKED</div>
+          <div className="flow-arrow">→</div>
+          <div className="flow-step"><span>4</span>Wallet update + audit log</div>
+        </div>
+      </section>
+
+      <section id="pricing" className="pricing-lp">
+        <h2 className="section-title">Simple, usage-based pricing</h2>
+        <div className="plan-row">
+          {plans.map((p) => (
+            <div className={`plan-mini ${p.popular ? "popular" : ""}`} key={p.name}>
+              {p.popular && <div className="ribbon">Most popular</div>}
+              <div className="pm-name">{p.name}</div>
+              <div className="pm-price">{p.price}<span>/mo</span></div>
+              <div className="pm-agents">{p.agents}</div>
+            </div>
+          ))}
+        </div>
+        <Link href="/billing" className="btn-primary center">Compare plans →</Link>
+      </section>
+
+      <section className="cta-final">
+        <h2>Give your AI agents a wallet you can trust.</h2>
+        <Link href="/dashboard" className="btn-primary">Open the live dashboard →</Link>
+      </section>
+
+      <footer className="lp-footer">
+        <span>AgentVault — corporate wallet for AI agents</span>
+        <a href="https://github.com/westfellow25/smart-wallet-AI-agents" target="_blank" rel="noreferrer">
+          GitHub
+        </a>
+      </footer>
     </div>
   );
 }
