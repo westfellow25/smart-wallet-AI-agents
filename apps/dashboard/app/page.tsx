@@ -34,7 +34,8 @@ export default function Landing() {
           <a href="#features">Features</a>
           <a href="#pricing">Pricing</a>
           <Link href="/dashboard">Live demo</Link>
-          <Link href="/dashboard" className="nav-cta">Open dashboard →</Link>
+          <Link href="/login">Sign in</Link>
+          <Link href="/login" className="nav-cta">Get started →</Link>
         </nav>
       </header>
 

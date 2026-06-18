@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import { authRouter } from "./routes/auth";
 import { agentsRouter } from "./routes/agents";
 import { policiesRouter } from "./routes/policies";
 import { transactionsRouter } from "./routes/transactions";
@@ -30,6 +31,7 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok", service: "agentvault-api", time: new Date().toISOString() });
 });
 
+app.use("/v1/auth", authRouter);
 app.use("/v1/agents", agentsRouter);
 app.use("/v1/policies", policiesRouter);
 app.use("/v1/transactions", transactionsRouter);

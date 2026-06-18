@@ -1,20 +1,35 @@
 // Серверный клиент к AgentVault API. Используется в Next route handlers.
-// Если API недоступен или не задан ORG_ID — отдаём демо-данные,
-// чтобы дашборд всегда рендерился.
+// Режим "live" — когда пользователь вошёл (JWT-cookie) или задан ORG_ID.
+// Иначе отдаём демо-данные, чтобы дашборд всегда рендерился.
 
-const API_URL = process.env.AGENTVAULT_API_URL ?? "http://localhost:4000";
+import { cookies } from "next/headers";
+
+export const API_URL = process.env.AGENTVAULT_API_URL ?? "http://localhost:4000";
 const ORG_ID = process.env.AGENTVAULT_ORG_ID ?? "";
+export const TOKEN_COOKIE = "av_token";
 
-export function isConfigured(): boolean {
-  return Boolean(ORG_ID);
+async function authToken(): Promise<string | undefined> {
+  return (await cookies()).get(TOKEN_COOKIE)?.value;
+}
+
+// Live-режим: есть сессия пользователя (JWT) или явный ORG_ID (dev/деплой).
+export async function isConfigured(): Promise<boolean> {
+  if (ORG_ID) return true;
+  return Boolean(await authToken());
 }
 
 async function apiFetch(path: string, init?: RequestInit) {
+  const token = await authToken();
+  const auth: Record<string, string> = token
+    ? { Authorization: `Bearer ${token}` }
+    : ORG_ID
+    ? { "x-org-id": ORG_ID }
+    : {};
   return fetch(`${API_URL}${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",
-      "x-org-id": ORG_ID,
+      ...auth,
       ...(init?.headers ?? {}),
     },
     cache: "no-store",

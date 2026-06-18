@@ -6,7 +6,7 @@ export async function POST(req: Request) {
   if (!plan) {
     return NextResponse.json({ error: "plan is required" }, { status: 400 });
   }
-  if (!isConfigured()) {
+  if (!(await isConfigured())) {
     // demo-режим: имитируем мгновенный апгрейд.
     return NextResponse.json({ devMode: true, plan, status: "ACTIVE" });
   }

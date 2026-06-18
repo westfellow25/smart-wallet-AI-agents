@@ -6,7 +6,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  if (!isConfigured()) {
+  if (!(await isConfigured())) {
     // demo-режим: просто подтверждаем оптимистично
     return NextResponse.json({ id, status: "APPROVED", source: "demo" });
   }

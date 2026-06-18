@@ -4,7 +4,7 @@ import { demoAnomalies } from "@/lib/demoData";
 
 // GET /api/anomalies — аномалии трат. Demo-fallback при офлайн-API.
 export async function GET() {
-  if (isConfigured()) {
+  if (await isConfigured()) {
     try {
       const anomalies = await fetchAnomalies();
       return NextResponse.json({ anomalies, source: "live" });

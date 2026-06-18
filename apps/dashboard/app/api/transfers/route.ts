@@ -4,7 +4,7 @@ import { demoTransfers, demoPaymentRequests } from "@/lib/demoData";
 
 // GET /api/transfers — A2A-переводы + счета одним вызовом. Demo-fallback.
 export async function GET() {
-  if (isConfigured()) {
+  if (await isConfigured()) {
     try {
       const [transfers, paymentRequests] = await Promise.all([
         fetchTransfers(),

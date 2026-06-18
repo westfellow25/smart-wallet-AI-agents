@@ -4,7 +4,7 @@ import { demoAgents } from "@/lib/demoData";
 
 // GET /api/agents — список агентов (demo-fallback).
 export async function GET() {
-  if (isConfigured()) {
+  if (await isConfigured()) {
     try {
       return NextResponse.json({ agents: await fetchAgents(), source: "live" });
     } catch {
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   if (!name) {
     return NextResponse.json({ error: "name is required" }, { status: 400 });
   }
-  if (!isConfigured()) {
+  if (!(await isConfigured())) {
     // demo: возвращаем правдоподобного агента с одноразовым ключом.
     const key = "av_demo_" + Math.random().toString(16).slice(2, 18);
     return NextResponse.json({
