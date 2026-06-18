@@ -2,11 +2,13 @@
 
 # AgentVault
 
-### Corporate wallet for AI agents — spending policies, approvals, audit trail.
+### The money control layer for agent payments — per-agent wallets, spending policies, approvals, audit trail.
 
 [![CI](https://github.com/westfellow25/smart-wallet-AI-agents/actions/workflows/ci.yml/badge.svg)](https://github.com/westfellow25/smart-wallet-AI-agents/actions/workflows/ci.yml)
 
-**If an AI agent is a new hire, AgentVault is its corporate card, its spending limit, and the manager who signs off on the big purchases.**
+**Autonomy without the 3am budget-drain.** Agents pay merchants and pay each
+other on their own — a human only gets pinged on the risky long tail, and
+finance gets a full audit trail.
 
 </div>
 
@@ -54,6 +56,7 @@ money.
 
 ## Features
 
+- 🔁 **Agent-to-agent payments** — agents pay other agents directly (transfers + invoices), each one cleared through the same Policy Engine. The control layer that sits *under* agent payments.
 - 🛡️ **Policy Engine** — per-transaction limit, daily limit, allowed categories, and an approval threshold, combined conservatively across all active policies.
 - ⏸ **Human-in-the-loop approvals** — anything above your threshold becomes `PENDING` and waits for a person to approve or reject.
 - 🧾 **Immutable audit trail** — every transaction stored with its status and the exact reason it was approved, held, or blocked.
@@ -190,7 +193,8 @@ if (d.approved) runCampaign();
 - ✅ **Phase 3 — SDKs:** drop-in JS/TS + Python SDKs with example agents
 - ✅ **Phase 4a — Billing:** Stripe subscriptions (4 plans), plan-based agent limits, pricing page, webhooks
 - ✅ **Phase 4b — Polish:** marketing landing, CI, virtual cards (USDC on Base L2) with freeze/unfreeze
-- ⬜ **Phase 5 — On-chain:** real card issuing + USDC settlement on Base
+- ✅ **Phase 5 — Agent-to-agent payments:** transfers + invoices between agents, cleared through the Policy Engine
+- ⬜ **Phase 6 — On-chain:** real card issuing + USDC settlement on Base (x402-style HTTP 402 endpoint)
 
 * * *
 

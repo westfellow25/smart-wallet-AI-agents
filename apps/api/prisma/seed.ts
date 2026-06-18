@@ -47,7 +47,44 @@ async function main() {
     },
   });
 
+  // Второй агент — чтобы демонстрировать agent-to-agent платежи.
+  const agent2Key = "av_" + randomBytes(24).toString("hex");
+  const agent2 = await prisma.agent.create({
+    data: {
+      orgId: org.id,
+      name: "Data Provider Agent",
+      apiKey: agent2Key,
+      wallet: { create: { orgId: org.id, balance: 20000, currency: "USD" } },
+    },
+  });
+
+  // Демо A2A-перевод: Marketing Bot платит Data Provider $25 за датасет.
+  await prisma.transfer.create({
+    data: {
+      orgId: org.id,
+      fromAgentId: agent.id,
+      toAgentId: agent2.id,
+      amount: 2500,
+      memo: "Датасет аудитории Q2",
+      category: "a2a",
+      status: "APPROVED",
+    },
+  });
+
+  // Демо счёт: Data Provider выставляет Marketing Bot $40.
+  await prisma.paymentRequest.create({
+    data: {
+      orgId: org.id,
+      payeeAgentId: agent2.id,
+      payerAgentId: agent.id,
+      amount: 4000,
+      memo: "API-доступ к данным, 1000 запросов",
+      category: "a2a",
+    },
+  });
+
   console.log("\nSeed готов. Сохрани эти значения для теста API:\n");
+  console.log("  AGENT2_KEY =", agent2Key, "(Data Provider Agent)");
   console.log("  ORG_ID     =", org.id);
   console.log("  AGENT_ID   =", agent.id);
   console.log("  AGENT_KEY  =", apiKey);

@@ -38,6 +38,12 @@ enum SubscriptionStatus {
   INCOMPLETE
 }
 
+enum PaymentRequestStatus {
+  OPEN
+  PAID
+  CANCELED
+}
+
 enum CardNetwork {
   VISA
   USDC_BASE // USDC-карта на Base L2
@@ -53,12 +59,14 @@ model Organization {
   name      String
   createdAt DateTime @default(now())
 
-  agents       Agent[]
-  policies     Policy[]
-  wallets      Wallet[]
-  transactions Transaction[]
-  subscription Subscription?
-  cards        VirtualCard[]
+  agents          Agent[]
+  policies        Policy[]
+  wallets         Wallet[]
+  transactions    Transaction[]
+  subscription    Subscription?
+  cards           VirtualCard[]
+  transfers       Transfer[]
+  paymentRequests PaymentRequest[]
 }
 
 model Subscription {
@@ -91,6 +99,61 @@ model Agent {
   wallet       Wallet?
   transactions Transaction[]
   card         VirtualCard?
+
+  sentTransfers     Transfer[]       @relation("TransferFrom")
+  receivedTransfers Transfer[]       @relation("TransferTo")
+  requestsAsPayee   PaymentRequest[] @relation("PRPayee")
+  requestsAsPayer   PaymentRequest[] @relation("PRPayer")
+
+  @@index([orgId])
+}
+
+// Перевод денег между агентами (agent-to-agent payment).
+// Проходит через Policy Engine отправителя.
+model Transfer {
+  id          String            @id @default(cuid())
+  orgId       String // организация отправителя (для дашборда)
+  fromAgentId String
+  toAgentId   String
+  amount      Int // в центах
+  currency    String            @default("USD")
+  memo        String?
+  category    String            @default("a2a")
+  status      TransactionStatus
+  reason      String?
+  createdAt   DateTime          @default(now())
+  decidedAt   DateTime?
+  decidedBy   String?
+
+  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  fromAgent Agent        @relation("TransferFrom", fields: [fromAgentId], references: [id], onDelete: Cascade)
+  toAgent   Agent        @relation("TransferTo", fields: [toAgentId], references: [id], onDelete: Cascade)
+
+  paymentRequest PaymentRequest?
+
+  @@index([orgId])
+  @@index([fromAgentId])
+  @@index([toAgentId])
+}
+
+// Счёт, который один агент выставляет другому. Оплата создаёт Transfer.
+model PaymentRequest {
+  id           String               @id @default(cuid())
+  orgId        String // организация получателя счёта (payee)
+  payeeAgentId String // кто выставил счёт и получит деньги
+  payerAgentId String? // от кого ждут оплату (опционально)
+  amount       Int // в центах
+  currency     String               @default("USD")
+  memo         String?
+  category     String               @default("a2a")
+  status       PaymentRequestStatus @default(OPEN)
+  transferId   String?              @unique
+  createdAt    DateTime             @default(now())
+
+  org      Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  payee    Agent        @relation("PRPayee", fields: [payeeAgentId], references: [id], onDelete: Cascade)
+  payer    Agent?       @relation("PRPayer", fields: [payerAgentId], references: [id], onDelete: SetNull)
+  transfer Transfer?    @relation(fields: [transferId], references: [id], onDelete: SetNull)
 
   @@index([orgId])
 }

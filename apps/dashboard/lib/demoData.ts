@@ -25,6 +25,19 @@ export const demoAnomalies = [
   { id: "an3", severity: "LOW", title: "Новый мерчант", detail: "Первая трата на \"TikTok Ads\" за последние 30 дней", agentName: "Marketing Bot", at: minutesAgo(52) },
 ];
 
+export const demoTransfers = [
+  { id: "tr1", amount: 2500, currency: "USD", memo: "Датасет аудитории Q2", category: "a2a", status: "APPROVED", reason: null, createdAt: minutesAgo(7), fromAgent: { name: "Marketing Bot" }, toAgent: { name: "Data Provider Agent" } },
+  { id: "tr2", amount: 30000, currency: "USD", memo: "Compute lease (8x H100, 2h)", category: "a2a", status: "PENDING", reason: "Сумма $300.00 выше порога $200.00 — требуется одобрение человека", createdAt: minutesAgo(3), fromAgent: { name: "Research Agent" }, toAgent: { name: "GPU Broker Agent" } },
+  { id: "tr3", amount: 1200, currency: "USD", memo: "Перевод фактов", category: "a2a", status: "APPROVED", reason: null, createdAt: minutesAgo(22), fromAgent: { name: "Support Copilot" }, toAgent: { name: "Knowledge Agent" } },
+  { id: "tr4", amount: 70000, currency: "USD", memo: "Bulk lead purchase", category: "a2a", status: "BLOCKED", reason: "Сумма $700.00 превышает лимит на транзакцию $500.00", createdAt: minutesAgo(38), fromAgent: { name: "Marketing Bot" }, toAgent: { name: "Lead Vendor Agent" } },
+];
+
+export const demoPaymentRequests = [
+  { id: "pr1", amount: 4000, currency: "USD", memo: "API-доступ к данным, 1000 запросов", status: "OPEN", createdAt: minutesAgo(11), payee: { name: "Data Provider Agent" }, payer: { name: "Marketing Bot" } },
+  { id: "pr2", amount: 1500, currency: "USD", memo: "Translation batch #84", status: "OPEN", createdAt: minutesAgo(26), payee: { name: "Translator Agent" }, payer: null },
+  { id: "pr3", amount: 2500, currency: "USD", memo: "Датасет аудитории Q2", status: "PAID", createdAt: minutesAgo(40), payee: { name: "Data Provider Agent" }, payer: { name: "Marketing Bot" } },
+];
+
 export const demoPolicies = [
   {
     id: "pol1",

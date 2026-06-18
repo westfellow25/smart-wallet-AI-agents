@@ -104,6 +104,7 @@ export default function Agents() {
           <Link href="/">Home</Link>
           <Link href="/dashboard">Control Tower</Link>
           <span className="active">Agents</span>
+          <Link href="/payments">Payments</Link>
           <Link href="/cards">Cards</Link>
           <Link href="/billing">Billing</Link>
         </nav>

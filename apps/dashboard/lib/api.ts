@@ -115,6 +115,33 @@ export async function createPolicy(body: Record<string, unknown>) {
   return res.json();
 }
 
+export async function fetchTransfers() {
+  const res = await apiFetch("/v1/transfers");
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  return res.json();
+}
+
+export async function decideTransfer(id: string, action: "approve" | "reject") {
+  const res = await apiFetch(`/v1/transfers/${id}/${action}`, {
+    method: "POST",
+    body: JSON.stringify({ decidedBy: "dashboard" }),
+  });
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  return res.json();
+}
+
+export async function fetchPaymentRequests() {
+  const res = await apiFetch("/v1/payment-requests");
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  return res.json();
+}
+
+export async function cancelPaymentRequest(id: string) {
+  const res = await apiFetch(`/v1/payment-requests/${id}/cancel`, { method: "POST" });
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  return res.json();
+}
+
 export async function setCardStatus(id: string, action: "freeze" | "unfreeze") {
   const res = await apiFetch(`/v1/cards/${id}/${action}`, { method: "POST" });
   if (!res.ok) throw new Error(`API ${res.status}`);
