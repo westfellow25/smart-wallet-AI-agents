@@ -205,3 +205,19 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Project additions
+node_modules/
+dist/
+.env
+*.local
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Наши исходники lib/ — переопределяем Python-правило выше
+!apps/api/src/lib/
+!apps/dashboard/lib/
