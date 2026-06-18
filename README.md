@@ -14,6 +14,20 @@ finance gets a full audit trail.
 
 * * *
 
+## See it in action
+
+| Control Tower — live feed, approvals, anomaly detection | Agent-to-agent payments |
+|:---:|:---:|
+| ![Control Tower](docs/screenshots/dashboard.png) | ![Agent payments](docs/screenshots/payments.png) |
+| **Virtual cards (USDC on Base L2)** | **Agents & policies (self-serve)** |
+| ![Virtual cards](docs/screenshots/cards.png) | ![Agents](docs/screenshots/agents.png) |
+
+<p align="center">
+  <img src="docs/screenshots/landing.png" width="80%" alt="Landing" />
+</p>
+
+* * *
+
 ## The problem
 
 Companies are putting AI agents into production — agents that buy ads, call paid
