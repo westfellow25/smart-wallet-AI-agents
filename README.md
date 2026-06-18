@@ -193,6 +193,17 @@ if (d.approved) runCampaign();
 
 * * *
 
+## Deploy
+
+- **Dashboard → Vercel** in ~5 min (runs on demo data, no backend needed) —
+  the fastest way to a shareable live link.
+- **API → Render / Railway** with bundled Postgres (Docker + one-click
+  [`render.yaml`](./render.yaml) blueprint).
+
+Full step-by-step in **[DEPLOY.md](./DEPLOY.md)**.
+
+* * *
+
 ## What AgentVault is not
 
 - ❌ **Not a bank or a card issuer** (yet) — today it's the policy/approval/audit
