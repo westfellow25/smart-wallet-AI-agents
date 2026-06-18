@@ -47,6 +47,32 @@ export type Policy = {
   isActive: boolean;
 };
 
+export type Transfer = {
+  id: string;
+  amount: number;
+  currency: string;
+  memo: string | null;
+  category: string;
+  status: TxStatus;
+  reason: string | null;
+  createdAt: string;
+  fromAgent?: { name: string };
+  toAgent?: { name: string };
+};
+
+export type PaymentRequestStatus = "OPEN" | "PAID" | "CANCELED";
+
+export type PaymentRequest = {
+  id: string;
+  amount: number;
+  currency: string;
+  memo: string | null;
+  status: PaymentRequestStatus;
+  createdAt: string;
+  payee?: { name: string };
+  payer?: { name: string } | null;
+};
+
 export type CardNetwork = "VISA" | "USDC_BASE";
 
 export type VirtualCard = {

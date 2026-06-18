@@ -893,3 +893,21 @@ body {
   font-size: 16px;
   cursor: pointer;
 }
+
+/* ============ Agent payments (A2A) ============ */
+.invoice {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.inv-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+.inv-head .amount { font-size: 18px; font-weight: 800; color: var(--brand-2); }
+.inv-memo { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+.inv-foot { display: flex; align-items: center; justify-content: space-between; }

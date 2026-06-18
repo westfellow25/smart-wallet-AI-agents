@@ -43,6 +43,7 @@ export default function Cards() {
           <Link href="/">Home</Link>
           <Link href="/dashboard">Control Tower</Link>
           <Link href="/agents">Agents</Link>
+          <Link href="/payments">Payments</Link>
           <span className="active">Cards</span>
           <Link href="/billing">Billing</Link>
         </nav>
