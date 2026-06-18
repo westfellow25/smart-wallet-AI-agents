@@ -4,6 +4,7 @@ import { prisma } from "../lib/prisma";
 import { agentAuth } from "../middleware/agentAuth";
 import { requireOrg } from "../middleware/orgContext";
 import { createTransfer, moveFunds, TransferError } from "../lib/transferEngine";
+import { notifyPending } from "../lib/notify";
 
 export const transfersRouter = Router();
 
@@ -30,6 +31,19 @@ transfersRouter.post("/", agentAuth, async (req, res) => {
       fromAgent: { id: req.agent!.id, orgId: req.agent!.orgId },
       ...parsed.data,
     });
+    if (transfer.status === "PENDING") {
+      const toAgent = await prisma.agent.findUnique({
+        where: { id: transfer.toAgentId },
+        select: { name: true },
+      });
+      notifyPending({
+        kind: "transfer",
+        agentName: req.agent!.name,
+        amount: transfer.amount,
+        to: toAgent?.name ?? "agent",
+        reason: transfer.reason,
+      });
+    }
     const http =
       transfer.status === "APPROVED" ? 201 : transfer.status === "PENDING" ? 202 : 200;
     res.status(http).json(transfer);

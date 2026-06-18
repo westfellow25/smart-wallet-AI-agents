@@ -1,10 +1,21 @@
 import { Router } from "express";
+import rateLimit from "express-rate-limit";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { hashPassword, verifyPassword, signToken } from "../lib/auth";
 import { requireAuth } from "../middleware/requireAuth";
 
 export const authRouter = Router();
+
+// Защита от брутфорса: не более 20 попыток входа/регистрации с IP за 15 мин.
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Слишком много попыток, попробуйте позже" },
+});
+authRouter.use(["/login", "/signup"], authLimiter);
 
 const signupSchema = z.object({
   email: z.string().email(),

@@ -71,6 +71,8 @@ money.
 ## Features
 
 - 🔁 **Agent-to-agent payments** — agents pay other agents directly (transfers + invoices), each one cleared through the same Policy Engine. The control layer that sits *under* agent payments.
+- ⚡ **x402 machine payments** — pay-per-request over HTTP 402: an agent pays for a resource, gets a signed receipt, and the resource server verifies it — the full challenge → pay → receipt → unlock loop.
+- 🔔 **Approval notifications** — a Slack/webhook ping the moment a spend or transfer needs a human, so "human-in-the-loop" doesn't mean "watch a dashboard".
 - 🛡️ **Policy Engine** — per-transaction limit, daily limit, allowed categories, and an approval threshold, combined conservatively across all active policies.
 - ⏸ **Human-in-the-loop approvals** — anything above your threshold becomes `PENDING` and waits for a person to approve or reject.
 - 🧾 **Immutable audit trail** — every transaction stored with its status and the exact reason it was approved, held, or blocked.
@@ -224,7 +226,8 @@ Full step-by-step in **[DEPLOY.md](./DEPLOY.md)**.
 - ✅ **Phase 4b — Polish:** marketing landing, CI, virtual cards (USDC on Base L2) with freeze/unfreeze
 - ✅ **Phase 5 — Agent-to-agent payments:** transfers + invoices between agents, cleared through the Policy Engine
 - ✅ **Phase 6 — Auth & accounts:** email/password signup & login, JWT sessions, per-org isolation
-- ⬜ **Phase 7 — On-chain:** real card issuing + USDC settlement on Base (x402-style HTTP 402 endpoint)
+- ✅ **Phase 7 — Hardening & x402:** hashed API keys, auth rate-limiting, approval webhooks, HTTP 402 machine-payment endpoint
+- ⬜ **Phase 8 — On-chain:** real card issuing + USDC settlement on Base
 
 * * *
 
