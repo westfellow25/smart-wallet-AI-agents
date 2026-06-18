@@ -1,0 +1,18 @@
+{
+  "name": "@agentvault/sdk",
+  "version": "0.1.0",
+  "description": "Official JS/TS SDK for AgentVault — let your AI agents spend money safely.",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "example": "ts-node examples/agent.ts"
+  },
+  "keywords": ["ai", "agents", "wallet", "fintech", "spending", "policy"],
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  }
+}
