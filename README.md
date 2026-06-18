@@ -61,6 +61,7 @@ money.
 - 📟 **Live Control Tower** — a dashboard with KPI metrics, a real-time transaction feed, pending approvals, and per-agent wallet health.
 - 💳 **Per-agent wallets** — each agent gets its own balance and daily-spend counter, reset automatically each day.
 - 🔑 **Agent-scoped API keys** — revoke or pause a single agent without touching the rest.
+- 🧑‍💻 **Self-serve admin UI** — provision agents, issue their cards, and author spending policies from the dashboard (no curl required).
 - 💰 **Usage-based billing** — four subscription tiers ($0 → $2,000/mo) with Stripe Checkout and plan-based agent limits. Runs in dev mode without keys.
 - 💳 **Virtual cards** — issue one card per agent (USDC on Base L2 or VISA), freeze/unfreeze instantly; every card spends through the same Policy Engine.
 - 🚨 **Anomaly detection** — flags repeated policy blocks (possible compromise/prompt-injection), spend-velocity spikes, and amount outliers, ranked by severity.

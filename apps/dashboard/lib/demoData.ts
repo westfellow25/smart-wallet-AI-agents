@@ -25,6 +25,18 @@ export const demoAnomalies = [
   { id: "an3", severity: "LOW", title: "Новый мерчант", detail: "Первая трата на \"TikTok Ads\" за последние 30 дней", agentName: "Marketing Bot", at: minutesAgo(52) },
 ];
 
+export const demoPolicies = [
+  {
+    id: "pol1",
+    name: "Default spending policy",
+    maxPerTransaction: 50000,
+    dailyLimit: 200000,
+    requireApprovalOver: 20000,
+    allowedCategories: ["ads", "api", "saas", "compute"],
+    isActive: true,
+  },
+];
+
 export const demoCards = [
   { id: "c1", network: "USDC_BASE", last4: "4242", expMonth: 12, expYear: new Date().getUTCFullYear() + 3, status: "ACTIVE", agent: { name: "Marketing Bot" } },
   { id: "c2", network: "USDC_BASE", last4: "8810", expMonth: 9, expYear: new Date().getUTCFullYear() + 2, status: "ACTIVE", agent: { name: "Research Agent" } },

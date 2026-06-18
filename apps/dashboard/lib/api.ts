@@ -79,6 +79,42 @@ export async function fetchAnomalies() {
   return res.json();
 }
 
+export async function createAgent(body: {
+  name: string;
+  startingBalance: number;
+}) {
+  const res = await apiFetch("/v1/agents", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  return res.json();
+}
+
+export async function issueCard(agentId: string) {
+  const res = await apiFetch("/v1/cards", {
+    method: "POST",
+    body: JSON.stringify({ agentId }),
+  });
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  return res.json();
+}
+
+export async function fetchPolicies() {
+  const res = await apiFetch("/v1/policies");
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  return res.json();
+}
+
+export async function createPolicy(body: Record<string, unknown>) {
+  const res = await apiFetch("/v1/policies", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  return res.json();
+}
+
 export async function setCardStatus(id: string, action: "freeze" | "unfreeze") {
   const res = await apiFetch(`/v1/cards/${id}/${action}`, { method: "POST" });
   if (!res.ok) throw new Error(`API ${res.status}`);
