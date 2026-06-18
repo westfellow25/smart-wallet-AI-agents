@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import type { Agent, Transaction, TxStatus } from "@/lib/types";
+import type { Agent, Anomaly, Transaction, TxStatus } from "@/lib/types";
 import { money, timeAgo } from "@/lib/format";
 
 const FILTERS: (TxStatus | "ALL")[] = ["ALL", "APPROVED", "PENDING", "BLOCKED"];
@@ -14,16 +14,22 @@ const categoryEmoji: Record<string, string> = {
 export default function Dashboard() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [agents, setAgents] = useState<Agent[]>([]);
+  const [anomalies, setAnomalies] = useState<Anomaly[]>([]);
   const [source, setSource] = useState<"live" | "demo">("demo");
   const [filter, setFilter] = useState<TxStatus | "ALL">("ALL");
   const [loaded, setLoaded] = useState(false);
 
   const load = useCallback(async () => {
     try {
-      const res = await fetch("/api/transactions", { cache: "no-store" });
-      const data = await res.json();
+      const [txRes, anRes] = await Promise.all([
+        fetch("/api/transactions", { cache: "no-store" }),
+        fetch("/api/anomalies", { cache: "no-store" }),
+      ]);
+      const data = await txRes.json();
+      const an = await anRes.json();
       setTransactions(data.transactions ?? []);
       setAgents(data.agents ?? []);
+      setAnomalies(an.anomalies ?? []);
       setSource(data.source ?? "demo");
     } catch {
       /* keep previous */
@@ -199,6 +205,31 @@ export default function Dashboard() {
                 </div>
               );
             })}
+          </section>
+
+          <div className="sep" />
+
+          <section className="panel">
+            <h2>
+              Anomaly detection
+              <span className="count">{anomalies.length}</span>
+            </h2>
+            {anomalies.length === 0 ? (
+              <div className="empty">✅ No anomalies detected</div>
+            ) : (
+              anomalies.map((a) => (
+                <div className={`anomaly ${a.severity}`} key={a.id}>
+                  <div className="an-head">
+                    <span className={`sev ${a.severity}`}>{a.severity}</span>
+                    <span className="an-title">{a.title}</span>
+                  </div>
+                  <div className="an-detail">{a.detail}</div>
+                  <div className="an-meta">
+                    {a.agentName} · {timeAgo(a.at)}
+                  </div>
+                </div>
+              ))
+            )}
           </section>
         </div>
       </div>

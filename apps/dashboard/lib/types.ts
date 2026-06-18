@@ -26,6 +26,17 @@ export type DashboardData = {
   source: "live" | "demo"; // откуда данные: реальный API или демо-фолбэк
 };
 
+export type Severity = "HIGH" | "MEDIUM" | "LOW";
+
+export type Anomaly = {
+  id: string;
+  severity: Severity;
+  title: string;
+  detail: string;
+  agentName: string;
+  at: string;
+};
+
 export type CardNetwork = "VISA" | "USDC_BASE";
 
 export type VirtualCard = {

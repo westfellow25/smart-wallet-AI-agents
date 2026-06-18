@@ -73,6 +73,12 @@ export async function fetchCards() {
   return res.json();
 }
 
+export async function fetchAnomalies() {
+  const res = await apiFetch("/v1/anomalies");
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  return res.json();
+}
+
 export async function setCardStatus(id: string, action: "freeze" | "unfreeze") {
   const res = await apiFetch(`/v1/cards/${id}/${action}`, { method: "POST" });
   if (!res.ok) throw new Error(`API ${res.status}`);
