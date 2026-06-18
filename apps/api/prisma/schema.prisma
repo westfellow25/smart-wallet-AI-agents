@@ -24,6 +24,20 @@ enum TransactionStatus {
   REJECTED // человек отклонил
 }
 
+enum Plan {
+  FREE
+  STARTER
+  GROWTH
+  SCALE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
+}
+
 model Organization {
   id        String   @id @default(cuid())
   name      String
@@ -33,6 +47,25 @@ model Organization {
   policies     Policy[]
   wallets      Wallet[]
   transactions Transaction[]
+  subscription Subscription?
+}
+
+model Subscription {
+  id    String @id @default(cuid())
+  orgId String @unique
+
+  plan   Plan               @default(FREE)
+  status SubscriptionStatus @default(ACTIVE)
+
+  // Связь со Stripe (null в FREE / dev-режиме без ключа).
+  stripeCustomerId     String?
+  stripeSubscriptionId String? @unique
+  currentPeriodEnd     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  org Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 }
 
 model Agent {

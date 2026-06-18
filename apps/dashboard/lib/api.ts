@@ -44,3 +44,25 @@ export async function decideTransaction(
   if (!res.ok) throw new Error(`API ${res.status}`);
   return res.json();
 }
+
+export async function fetchPlans() {
+  // /plans статичен и не требует org — берём напрямую.
+  const res = await fetch(`${API_URL}/v1/billing/plans`, { cache: "no-store" });
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  return res.json();
+}
+
+export async function fetchSubscription() {
+  const res = await apiFetch("/v1/billing/subscription");
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  return res.json();
+}
+
+export async function checkout(plan: string) {
+  const res = await apiFetch("/v1/billing/checkout", {
+    method: "POST",
+    body: JSON.stringify({ plan }),
+  });
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  return res.json();
+}

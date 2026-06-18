@@ -59,6 +59,7 @@ money.
 - 📟 **Live Control Tower** — a dashboard with KPI metrics, a real-time transaction feed, pending approvals, and per-agent wallet health.
 - 💳 **Per-agent wallets** — each agent gets its own balance and daily-spend counter, reset automatically each day.
 - 🔑 **Agent-scoped API keys** — revoke or pause a single agent without touching the rest.
+- 💰 **Usage-based billing** — four subscription tiers ($0 → $2,000/mo) with Stripe Checkout and plan-based agent limits. Runs in dev mode without keys.
 
 * * *
 
@@ -179,7 +180,8 @@ if (d.approved) runCampaign();
 - ✅ **Phase 1 — Backend foundation:** Prisma schema, Policy Engine, audit trail, agent API keys
 - ✅ **Phase 2 — Control Tower:** live transaction feed, KPIs, pending approvals, agent wallets
 - ✅ **Phase 3 — SDKs:** drop-in JS/TS + Python SDKs with example agents
-- ⬜ **Phase 4 — Billing & polish:** Stripe subscriptions, virtual cards, USDC on Base L2, investor-ready demo
+- ✅ **Phase 4a — Billing:** Stripe subscriptions (4 plans), plan-based agent limits, pricing page, webhooks
+- ⬜ **Phase 4b — Polish:** virtual cards, USDC on Base L2, investor-ready demo
 
 * * *
 

@@ -3,6 +3,7 @@ import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { requireOrg } from "../middleware/orgContext";
+import { planLimits } from "../lib/plans";
 
 export const agentsRouter = Router();
 
@@ -19,6 +20,23 @@ agentsRouter.post("/", requireOrg, async (req, res) => {
     return res.status(400).json({ error: parsed.error.flatten() });
   }
   const { name, startingBalance, currency } = parsed.data;
+
+  // Enforce лимита агентов по тарифу (монетизация: апгрейд за рост).
+  const sub = await prisma.subscription.findUnique({ where: { orgId: req.orgId! } });
+  const limits = planLimits(sub?.plan ?? "FREE");
+  if (limits.maxAgents !== null) {
+    const count = await prisma.agent.count({
+      where: { orgId: req.orgId!, status: { not: "REVOKED" } },
+    });
+    if (count >= limits.maxAgents) {
+      return res.status(402).json({
+        error: `Достигнут лимит тарифа ${limits.name}: ${limits.maxAgents} агентов. Апгрейдни план.`,
+        code: "PLAN_LIMIT_REACHED",
+        plan: limits.plan,
+      });
+    }
+  }
+
   const apiKey = "av_" + randomBytes(24).toString("hex");
 
   const agent = await prisma.agent.create({

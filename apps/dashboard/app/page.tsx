@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import type { Agent, Transaction, TxStatus } from "@/lib/types";
 import { money, timeAgo } from "@/lib/format";
 
@@ -77,6 +78,10 @@ export default function Dashboard() {
             <p>Corporate wallet for AI agents</p>
           </div>
         </div>
+        <nav className="nav">
+          <span className="active">Control Tower</span>
+          <Link href="/billing">Billing</Link>
+        </nav>
         <div className="source-pill">
           <span className={`dot ${source === "demo" ? "demo" : ""}`} />
           {source === "live" ? "Live — connected to API" : "Demo data (API offline)"}

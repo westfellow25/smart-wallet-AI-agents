@@ -315,3 +315,136 @@ body {
   padding: 24px 0;
 }
 .sep { height: 18px; }
+
+/* Nav */
+.nav {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+.nav a {
+  color: var(--muted);
+  text-decoration: none;
+}
+.nav a:hover { color: var(--text); }
+.nav .active { color: var(--brand-2); }
+
+/* Current plan banner */
+.current-plan {
+  display: flex;
+  gap: 48px;
+}
+.current-plan .label {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.current-plan .big {
+  font-size: 24px;
+  font-weight: 750;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Pricing grid */
+.pricing {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.price-card {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+}
+.price-card.popular {
+  border-color: var(--brand);
+  box-shadow: 0 12px 40px rgba(124, 92, 255, 0.18);
+}
+.price-card.current {
+  border-color: var(--green);
+}
+.ribbon {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--brand);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.pname {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.pprice {
+  font-size: 34px;
+  font-weight: 800;
+  margin: 8px 0 16px;
+  letter-spacing: -1px;
+}
+.pprice span {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.features {
+  list-style: none;
+  flex: 1;
+  margin-bottom: 18px;
+}
+.features li {
+  font-size: 13px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+.features li:last-child { border-bottom: none; }
+.pbtn {
+  width: 100%;
+  padding: 11px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid var(--brand);
+  background: var(--brand);
+  color: white;
+  transition: opacity 0.15s;
+}
+.pbtn:hover { opacity: 0.9; }
+.pbtn.current {
+  background: var(--green-bg);
+  border-color: var(--green);
+  color: var(--green);
+  cursor: default;
+}
+.pbtn.ghost {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+.pbtn:disabled { cursor: default; }
+.finehint {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 22px;
+}

@@ -12,6 +12,21 @@ export const demoAgents: Agent[] = [
   { id: "a4", name: "Support Copilot", status: "PAUSED", createdAt: minutesAgo(3000), wallet: { balance: 9900, dailySpent: 100, currency: "USD" } },
 ];
 
+export const demoPlans = [
+  { plan: "FREE", name: "Free", priceMonthly: 0, maxAgents: 2, monthlyVolume: 100000, highlights: ["2 агента", "$1k объём/мес", "Policy Engine", "Audit trail"] },
+  { plan: "STARTER", name: "Starter", priceMonthly: 19900, maxAgents: 5, monthlyVolume: 1000000, highlights: ["5 агентов", "$10k объём/мес", "Approvals", "Email-алерты"] },
+  { plan: "GROWTH", name: "Growth", priceMonthly: 49900, maxAgents: 25, monthlyVolume: 5000000, highlights: ["25 агентов", "$50k объём/мес", "Anomaly detection", "Webhooks"] },
+  { plan: "SCALE", name: "Scale", priceMonthly: 200000, maxAgents: null, monthlyVolume: null, highlights: ["∞ агентов", "Безлимит объём", "SSO / SAML", "Priority support"] },
+];
+
+export const demoSubscription = {
+  plan: "GROWTH",
+  status: "ACTIVE",
+  currentPeriodEnd: null,
+  usage: { agents: 4, agentsLimit: 25 },
+  stripeEnabled: false,
+};
+
 export const demoTransactions: Transaction[] = [
   { id: "t1", amount: 30000, currency: "USD", merchant: "Meta Ads", category: "ads", status: "PENDING", reason: "Сумма $300.00 выше порога $200.00 — требуется одобрение человека", createdAt: minutesAgo(2), agent: { name: "Marketing Bot" } },
   { id: "t2", amount: 4500, currency: "USD", merchant: "OpenAI API", category: "api", status: "APPROVED", reason: null, createdAt: minutesAgo(5), agent: { name: "Research Agent" } },
